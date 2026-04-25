@@ -1,4 +1,4 @@
--- REX SYSTEM: V14 BYPASS + CINEMATIC INTRO + FIXED LONG SPAM
+-- REX UI-CHAT SPAM: V14 BYPASS + FULL CINEMATIC INTRO
 local Settings = {
     Delay = 1.8, 
     Active = false,
@@ -7,14 +7,23 @@ local Settings = {
     
     ShortMessages = {
         [1] = "Kɪ Mᴀᴀ Pᴇʟᴅɪᴀ Rᴇx अब्बू Nᴇ 😹👑",
+
         [2] = "Kɪ Mᴀᴀ Kᴇ Bʜᴏꜱᴅᴇ Mᴇ Rᴇx अब्बू Nᴇ Mᴜᴛᴀ 🤢🔥",
+
         [3] = "Tᴀᴋʟᴜ Rᴇx अब्बू Kɪ GULAMI Kʀʀ Rʜᴇ 🤢🔥💞",
+
         [4] = "Kɪ Mᴀᴀ Mᴀʀʀ Gʏɪ 😩🔥🤲🏻",
+
         [5] = "Cʜᴜᴘ Cʜᴀᴡ Cʜᴀᴡ Kʀɴᴇ Wᴀʟᴇ Kᴜᴛɪʏᴇ 😭🖕🏻🔥",
+
         [6] = "Bᴇᴛᴀ Sᴀᴀɴs Aʀʜɪ H Cʏᴀ? Yᴀ Oxʏɢᴇɴ Bʟᴏᴄᴋ Hᴏɢʏɪ 🤢🦶🏿🔥",
+
         [7] = "Tᴇʀᴇ Tᴀᴋʟᴇ Bᴀᴀᴘ Kᴇ Sᴀᴀʀ Pʀ Aᴀɢ Lɢᴀᴋᴇ TᴍᴋB Mᴇ Lᴀᴀᴛ Gʜᴜsᴀᴅᴜɴɢᴀ ✌🏻🔥",
+
         [8] = "Kɪ Mᴀᴀ Kᴀ Sᴀᴀᴅᴀ ʙʜᴏsᴅᴀ ɴᴀɴɢᴀ ᴋʀᴅɪʏᴀ Rᴇx ɴᴇ 🤢🔥",
+
         [9] = "Tᴇʀɪ Mᴀᴀ Kɪ Cʜᴜᴛ Mᴇ Gᴏʟɪ Mᴀᴀʀ Dᴜɴɢᴀ ʙᴇᴛᴀ 😩🔥",
+
         [10] = "Rᴇx Aʙʙᴜ Sᴇ Pᴀɴɢᴀ Mᴀᴛ Lᴇ ʙʜɪᴋʜᴀʀɪ 😹👑"
     },
     
@@ -31,55 +40,59 @@ local LP = game:GetService("Players").LocalPlayer
 local TS = game:GetService("TweenService")
 local CoreGui = game:GetService("CoreGui")
 local ScreenGui = Instance.new("ScreenGui", CoreGui)
+ScreenGui.DisplayOrder = 999 -- Ensures it stays on top of everything
 
--- // CINEMATIC NOTICE SYSTEM
+-- // FULL SCREEN CINEMATIC BLACKOUT
 local NoticeFrame = Instance.new("Frame", ScreenGui)
-NoticeFrame.Size = UDim2.new(1, 0, 1, 0)
+NoticeFrame.Size = UDim2.new(1, 0, 1, 100) -- Extra height to ensure full coverage
+NoticeFrame.Position = UDim2.new(0, 0, 0, -50)
 NoticeFrame.BackgroundColor3 = Color3.new(0, 0, 0)
 NoticeFrame.BackgroundTransparency = 1
 NoticeFrame.ZIndex = 100
 
 local RedNotice = Instance.new("TextLabel", NoticeFrame)
 RedNotice.Size = UDim2.new(1, 0, 0, 50)
-RedNotice.Position = UDim2.new(0, 0, 0.3, 0)
+RedNotice.Position = UDim2.new(0, 0, 0.35, 0)
 RedNotice.TextColor3 = Color3.new(1, 0, 0)
 RedNotice.Text = "NOTICE"
 RedNotice.Font = Enum.Font.GothamBold
-RedNotice.TextSize = 40
+RedNotice.TextSize = 50
 RedNotice.BackgroundTransparency = 1
 RedNotice.TextTransparency = 1
+RedNotice.ZIndex = 101
 
 local WhiteText = Instance.new("TextLabel", NoticeFrame)
-WhiteText.Size = UDim2.new(1, 0, 0, 100)
-WhiteText.Position = UDim2.new(0, 0, 0.45, 0)
+WhiteText.Size = UDim2.new(0.8, 0, 0, 150)
+WhiteText.Position = UDim2.new(0.1, 0, 0.45, 0)
 WhiteText.TextColor3 = Color3.new(1, 1, 1)
 WhiteText.Font = Enum.Font.GothamBold
-WhiteText.TextSize = 24
+WhiteText.TextSize = 26
 WhiteText.BackgroundTransparency = 1
 WhiteText.Text = ""
 WhiteText.TextWrapped = true
+WhiteText.ZIndex = 101
 
--- Start Intro Sequence
+-- // INTRO SEQUENCE
 task.spawn(function()
-    TS:Create(NoticeFrame, TweenInfo.new(1.5), {BackgroundTransparency = 0}):Play()
-    task.wait(1.5)
-    TS:Create(RedNotice, TweenInfo.new(0.5), {TextTransparency = 0}):Play()
+    TS:Create(NoticeFrame, TweenInfo.new(1.2), {BackgroundTransparency = 0}):Play()
+    task.wait(1.2)
+    TS:Create(RedNotice, TweenInfo.new(0.6), {TextTransparency = 0}):Play()
     
-    local message = "This script is for UI-Chatbox ONLY. It will NOT work in Roblox Chat."
-    for word in message:gmatch("%S+") do
+    local introMessage = "This script is for REX UI-CHAT SPAM ONLY. It will NOT work in standard chat. Prepare for elite roasting."
+    for word in introMessage:gmatch("%S+") do
         WhiteText.Text = WhiteText.Text .. word .. " "
-        task.wait(0.2)
+        task.wait(0.15) -- Fast typing speed
     end
     
-    task.wait(1.5)
+    task.wait(2)
     TS:Create(NoticeFrame, TweenInfo.new(1), {BackgroundTransparency = 1}):Play()
-    TS:Create(RedNotice, TweenInfo.new(1), {TextTransparency = 1}):Play()
-    TS:Create(WhiteText, TweenInfo.new(1), {TextTransparency = 1}):Play()
+    TS:Create(RedNotice, TweenInfo.new(0.8), {TextTransparency = 1}):Play()
+    TS:Create(WhiteText, TweenInfo.new(0.8), {TextTransparency = 1}):Play()
     task.wait(1)
     NoticeFrame:Destroy()
 end)
 
--- // MAIN GUI
+-- // MAIN GUI (REX UI-CHAT SPAM)
 local RToggle = Instance.new("TextButton", ScreenGui)
 RToggle.Size = UDim2.new(0, 55, 0, 55); RToggle.Position = UDim2.new(0.02, 0, 0.45, 0); RToggle.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 RToggle.Text = "R"; RToggle.TextColor3 = Color3.new(1, 1, 1); RToggle.Font = Enum.Font.GothamBold; RToggle.TextSize = 25; RToggle.Draggable = true
@@ -93,7 +106,7 @@ Instance.new("UICorner", Main)
 local MainStroke = Instance.new("UIStroke", Main); MainStroke.Thickness = 3
 
 local Title = Instance.new("TextLabel", Main)
-Title.Size = UDim2.new(1, 0, 0, 40); Title.Text = "REX V14 ELITE"; Title.TextColor3 = Color3.new(1,1,1); Title.Font = Enum.Font.GothamBold; Title.BackgroundTransparency = 1
+Title.Size = UDim2.new(1, 0, 0, 40); Title.Text = "REX UI-CHAT SPAM"; Title.TextColor3 = Color3.new(1,1,1); Title.Font = Enum.Font.GothamBold; Title.BackgroundTransparency = 1
 
 local DynamicInput = Instance.new("TextBox", Main)
 DynamicInput.Size = UDim2.new(0.9, 0, 0, 40); DynamicInput.Position = UDim2.new(0.05, 0, 0.2, 0); DynamicInput.PlaceholderText = "TARGET NAME"; DynamicInput.BackgroundColor3 = Color3.fromRGB(25, 25, 25); DynamicInput.TextColor3 = Color3.new(1, 1, 1); DynamicInput.Text = ""
@@ -127,7 +140,7 @@ local function SilentSend(msg)
     end
 end
 
--- // SPAM LOGIC
+-- // AUTO-ADJUSTING LOGIC
 local function StartSpam(mode)
     Settings.Active = false; task.wait(0.1); Settings.Active = true
     local userInput = DynamicInput.Text
@@ -145,21 +158,24 @@ local function StartSpam(mode)
                 local roast = Settings.LongRoasts[l]
                 l = (l >= #Settings.LongRoasts) and 1 or l + 1
                 
-                local combinedText = " " .. target .. " " .. roast
                 local currentSym = Settings.Symbols[sIndex]
                 sIndex = (sIndex >= #Settings.Symbols) and 1 or sIndex + 1
                 
-                -- FIXED SYMBOL ADJUSTMENT
-                local maxChars = 190 -- Safe limit
-                local fillerCount = math.floor((maxChars - #combinedText) / #currentSym)
+                -- AUTO-CALCULATE MAX SYMBOLS TO PREVENT NON-SENDING
+                local textPart = " " .. target .. " " .. roast
+                local maxChars = 195 -- Limit to keep it safe for sending
+                local fillerSpace = maxChars - #textPart
+                local fillerCount = math.floor(fillerSpace / #currentSym)
+                
                 if fillerCount > 0 then
-                    msg = string.rep(currentSym, fillerCount) .. combinedText
+                    msg = string.rep(currentSym, fillerCount) .. textPart
                 else
-                    msg = combinedText
+                    msg = textPart
                 end
             elseif mode == "Custom" then
                 if userInput ~= "" then msg = userInput else Settings.Active = false end
             end
+            
             if msg ~= "" then SilentSend(msg) end
             task.wait(d)
         end
