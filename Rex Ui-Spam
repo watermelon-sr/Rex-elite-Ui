@@ -1,4 +1,4 @@
--- REX UI-CHAT SPAM: HUB INTRO VERSION
+-- REX UI-CHAT SPAM: HUB BOX VERSION
 local Settings = {
     Delay = 1.8, 
     Active = false,
@@ -33,39 +33,47 @@ local CoreGui = game:GetService("CoreGui")
 local ScreenGui = Instance.new("ScreenGui", CoreGui)
 ScreenGui.DisplayOrder = 999
 
--- // THE HUB BLACKOUT SCREEN
-local IntroFrame = Instance.new("Frame", ScreenGui)
-IntroFrame.Size = UDim2.new(1, 0, 1, 100); IntroFrame.Position = UDim2.new(0, 0, 0, -50)
-IntroFrame.BackgroundColor3 = Color3.new(0, 0, 0); IntroFrame.ZIndex = 200
+-- // HUB BOX (INTRO GUI)
+local HubBox = Instance.new("Frame", ScreenGui)
+HubBox.Size = UDim2.new(0, 350, 0, 200)
+HubBox.Position = UDim2.new(0.5, -175, 0.5, -100)
+HubBox.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+HubBox.BorderSizePixel = 0
 
-local TitleHeader = Instance.new("TextLabel", IntroFrame)
-TitleHeader.Size = UDim2.new(1, 0, 0, 60); TitleHeader.Position = UDim2.new(0, 0, 0.4, 0)
-TitleHeader.TextColor3 = Color3.fromRGB(100, 255, 150); TitleHeader.Font = Enum.Font.GothamBold
-TitleHeader.TextSize = 45; TitleHeader.BackgroundTransparency = 1; TitleHeader.Text = "REX UI-CHAT SPAM"; TitleHeader.TextTransparency = 1
+local HubCorner = Instance.new("UICorner", HubBox)
+local HubStroke = Instance.new("UIStroke", HubBox)
+HubStroke.Thickness = 3
+HubStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 
-local SubNote = Instance.new("TextLabel", IntroFrame)
-SubNote.Size = UDim2.new(1, 0, 0, 40); SubNote.Position = UDim2.new(0, 0, 0.5, 0)
-SubNote.TextColor3 = Color3.new(1, 1, 1); SubNote.Font = Enum.Font.GothamMedium
-SubNote.TextSize = 20; SubNote.BackgroundTransparency = 1; SubNote.TextTransparency = 1
+local TitleHeader = Instance.new("TextLabel", HubBox)
+TitleHeader.Size = UDim2.new(1, 0, 0, 50)
+TitleHeader.TextColor3 = Color3.fromRGB(100, 255, 150)
+TitleHeader.Font = Enum.Font.GothamBold
+TitleHeader.TextSize = 28
+TitleHeader.BackgroundTransparency = 1
+TitleHeader.Text = "REX UI-CHAT SPAM"
+
+local SubNote = Instance.new("TextLabel", HubBox)
+SubNote.Size = UDim2.new(0.9, 0, 0, 60)
+SubNote.Position = UDim2.new(0.05, 0, 0.3, 0)
+SubNote.TextColor3 = Color3.new(1, 1, 1)
+SubNote.Font = Enum.Font.GothamMedium
+SubNote.TextSize = 16
+SubNote.BackgroundTransparency = 1
+SubNote.TextWrapped = true
 SubNote.Text = "Note- this script is only for ui chat box. Enjoy"
 
-local ContinueBtn = Instance.new("TextButton", IntroFrame)
-ContinueBtn.Size = UDim2.new(0, 200, 0, 50); ContinueBtn.Position = UDim2.new(0.5, -100, 0.62, 0)
-ContinueBtn.BackgroundColor3 = Color3.fromRGB(100, 255, 150); ContinueBtn.TextColor3 = Color3.new(0, 0, 0)
-ContinueBtn.Font = Enum.Font.GothamBold; ContinueBtn.TextSize = 22; ContinueBtn.Text = "Continue"
-ContinueBtn.AutoButtonColor = true; ContinueBtn.BackgroundTransparency = 1; ContinueBtn.TextTransparency = 1
-Instance.new("UICorner", ContinueBtn).CornerRadius = UDim.new(0.5, 0)
+local ContinueBtn = Instance.new("TextButton", HubBox)
+ContinueBtn.Size = UDim2.new(0, 150, 0, 40)
+ContinueBtn.Position = UDim2.new(0.5, -75, 0.7, 0)
+ContinueBtn.BackgroundColor3 = Color3.fromRGB(100, 255, 150)
+ContinueBtn.TextColor3 = Color3.new(0, 0, 0)
+ContinueBtn.Font = Enum.Font.GothamBold
+ContinueBtn.TextSize = 18
+ContinueBtn.Text = "Continue"
+Instance.new("UICorner", ContinueBtn)
 
--- // SMOOTH LETTER TYPING & FADE EFFECT
-task.spawn(function()
-    TS:Create(TitleHeader, TweenInfo.new(1.5), {TextTransparency = 0}):Play()
-    task.wait(1)
-    TS:Create(SubNote, TweenInfo.new(1.5), {TextTransparency = 0}):Play()
-    task.wait(1)
-    TS:Create(ContinueBtn, TweenInfo.new(1), {BackgroundTransparency = 0, TextTransparency = 0}):Play()
-end)
-
--- // MAIN GUI SETUP
+-- // MAIN GUI (REX UI-CHAT SPAM)
 local RToggle = Instance.new("TextButton", ScreenGui)
 RToggle.Size = UDim2.new(0, 55, 0, 55); RToggle.Position = UDim2.new(0.02, 0, 0.45, 0); RToggle.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 RToggle.Text = "R"; RToggle.TextColor3 = Color3.new(1, 1, 1); RToggle.Font = Enum.Font.GothamBold; RToggle.TextSize = 25; RToggle.Draggable = true; RToggle.Visible = false
@@ -82,7 +90,7 @@ local Title = Instance.new("TextLabel", Main)
 Title.Size = UDim2.new(1, 0, 0, 40); Title.Text = "REX UI-CHAT SPAM"; Title.TextColor3 = Color3.new(1,1,1); Title.Font = Enum.Font.GothamBold; Title.BackgroundTransparency = 1
 
 local DynamicInput = Instance.new("TextBox", Main)
-DynamicInput.Size = UDim2.new(0.9, 0, 0, 40); DynamicInput.Position = UDim2.new(0.05, 0, 0.2, 0); DynamicInput.PlaceholderText = "TARGET NAME"; DynamicInput.BackgroundColor3 = Color3.fromRGB(25, 25, 25); DynamicInput.TextColor3 = Color3.new(1, 1, 1); DynamicInput.Text = ""
+DynamicInput.Size = UDim2.new(0.9, 0, 0, 40); DynamicInput.Position = UDim2.new(0.05, 0, 0.2, 0); DynamicInput.PlaceholderText = "TARGET NAME"; DynamicInput.BackgroundColor3 = Color3.fromRGB(25, 25, 25); DynamicInput.TextColor3 = Color3.new(1, 1, 1)
 Instance.new("UICorner", DynamicInput)
 
 local DelayInput = Instance.new("TextBox", Main)
@@ -96,13 +104,7 @@ Instance.new("UIListLayout", Scroll)
 
 -- // CONTINUE LOGIC
 ContinueBtn.MouseButton1Click:Connect(function()
-    TS:Create(TitleHeader, TweenInfo.new(0.5), {TextTransparency = 1}):Play()
-    TS:Create(SubNote, TweenInfo.new(0.5), {TextTransparency = 1}):Play()
-    TS:Create(ContinueBtn, TweenInfo.new(0.5), {BackgroundTransparency = 1, TextTransparency = 1}):Play()
-    task.wait(0.5)
-    TS:Create(IntroFrame, TweenInfo.new(1), {BackgroundTransparency = 1}):Play()
-    task.wait(1)
-    IntroFrame:Destroy()
+    HubBox:Destroy()
     RToggle.Visible = true
 end)
 
@@ -176,10 +178,13 @@ MenuBtn.MouseButton1Click:Connect(function()
     MenuBtn.Text = open and "CLOSE MODES ▲" or "OPEN MODES ▼"
 end)
 
+-- // RGB LOOP FOR BOTH GUIS
 task.spawn(function()
     while task.wait() do
         local c = Color3.fromHSV(tick() % 5 / 5, 1, 1)
-        MainStroke.Color = c; RStroke.Color = c
+        MainStroke.Color = c
+        RStroke.Color = c
+        if HubBox then HubStroke.Color = c end
     end
 end)
 
