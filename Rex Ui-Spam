@@ -1,4 +1,3 @@
--- REX UI-CHAT SPAM: HUB BOX VERSION
 local Settings = {
     Delay = 1.8, 
     Active = false,
@@ -33,12 +32,13 @@ local CoreGui = game:GetService("CoreGui")
 local ScreenGui = Instance.new("ScreenGui", CoreGui)
 ScreenGui.DisplayOrder = 999
 
--- // HUB BOX (INTRO GUI)
+-- // CENTERED HUB BOX (FIXED: NO FULLSCREEN BACKGROUND)
 local HubBox = Instance.new("Frame", ScreenGui)
 HubBox.Size = UDim2.new(0, 350, 0, 200)
 HubBox.Position = UDim2.new(0.5, -175, 0.5, -100)
-HubBox.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+HubBox.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 HubBox.BorderSizePixel = 0
+HubBox.ZIndex = 5
 
 local HubCorner = Instance.new("UICorner", HubBox)
 local HubStroke = Instance.new("UIStroke", HubBox)
@@ -49,13 +49,13 @@ local TitleHeader = Instance.new("TextLabel", HubBox)
 TitleHeader.Size = UDim2.new(1, 0, 0, 50)
 TitleHeader.TextColor3 = Color3.fromRGB(100, 255, 150)
 TitleHeader.Font = Enum.Font.GothamBold
-TitleHeader.TextSize = 28
+TitleHeader.TextSize = 26
 TitleHeader.BackgroundTransparency = 1
 TitleHeader.Text = "REX UI-CHAT SPAM"
 
 local SubNote = Instance.new("TextLabel", HubBox)
 SubNote.Size = UDim2.new(0.9, 0, 0, 60)
-SubNote.Position = UDim2.new(0.05, 0, 0.3, 0)
+SubNote.Position = UDim2.new(0.05, 0, 0.35, 0)
 SubNote.TextColor3 = Color3.new(1, 1, 1)
 SubNote.Font = Enum.Font.GothamMedium
 SubNote.TextSize = 16
@@ -64,8 +64,8 @@ SubNote.TextWrapped = true
 SubNote.Text = "Note- this script is only for ui chat box. Enjoy"
 
 local ContinueBtn = Instance.new("TextButton", HubBox)
-ContinueBtn.Size = UDim2.new(0, 150, 0, 40)
-ContinueBtn.Position = UDim2.new(0.5, -75, 0.7, 0)
+ContinueBtn.Size = UDim2.new(0, 140, 0, 35)
+ContinueBtn.Position = UDim2.new(0.5, -70, 0.75, 0)
 ContinueBtn.BackgroundColor3 = Color3.fromRGB(100, 255, 150)
 ContinueBtn.TextColor3 = Color3.new(0, 0, 0)
 ContinueBtn.Font = Enum.Font.GothamBold
@@ -73,7 +73,7 @@ ContinueBtn.TextSize = 18
 ContinueBtn.Text = "Continue"
 Instance.new("UICorner", ContinueBtn)
 
--- // MAIN GUI (REX UI-CHAT SPAM)
+-- // MAIN SCRIPT ELEMENTS (HIDDEN UNTIL CONTINUE)
 local RToggle = Instance.new("TextButton", ScreenGui)
 RToggle.Size = UDim2.new(0, 55, 0, 55); RToggle.Position = UDim2.new(0.02, 0, 0.45, 0); RToggle.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 RToggle.Text = "R"; RToggle.TextColor3 = Color3.new(1, 1, 1); RToggle.Font = Enum.Font.GothamBold; RToggle.TextSize = 25; RToggle.Draggable = true; RToggle.Visible = false
@@ -102,13 +102,12 @@ FolderFrame.Size = UDim2.new(1, 0, 0, 0); FolderFrame.Position = UDim2.new(0, 0,
 local Scroll = Instance.new("ScrollingFrame", FolderFrame); Scroll.Size = UDim2.new(1, 0, 1, 0); Scroll.BackgroundTransparency = 1; Scroll.CanvasSize = UDim2.new(0, 0, 2.2, 0); Scroll.ScrollBarThickness = 4
 Instance.new("UIListLayout", Scroll)
 
--- // CONTINUE LOGIC
+-- // BUTTONS
 ContinueBtn.MouseButton1Click:Connect(function()
     HubBox:Destroy()
     RToggle.Visible = true
 end)
 
--- // ENGINE
 local function SilentSend(msg)
     local finalMsg = msg .. " " .. string.rep(Settings.InvisibleChar, math.random(1, 5))
     for _, obj in pairs(LP.PlayerGui:GetDescendants()) do
@@ -127,7 +126,6 @@ local function SilentSend(msg)
     end
 end
 
--- // SPAM MODES
 local function StartSpam(mode)
     Settings.Active = false; task.wait(0.1); Settings.Active = true
     local userInput = DynamicInput.Text
@@ -157,7 +155,6 @@ local function StartSpam(mode)
     end)
 end
 
--- // UI BUTTONS
 local function CreateBtn(txt, color, callback)
     local b = Instance.new("TextButton", Scroll)
     b.Size = UDim2.new(1, 0, 0, 38); b.Text = txt; b.BackgroundColor3 = color; b.TextColor3 = Color3.new(1,1,1); b.Font = Enum.Font.GothamBold; b.MouseButton1Click:Connect(callback)
@@ -178,7 +175,7 @@ MenuBtn.MouseButton1Click:Connect(function()
     MenuBtn.Text = open and "CLOSE MODES ▲" or "OPEN MODES ▼"
 end)
 
--- // RGB LOOP FOR BOTH GUIS
+-- // RGB THICKNESS LOOP
 task.spawn(function()
     while task.wait() do
         local c = Color3.fromHSV(tick() % 5 / 5, 1, 1)
