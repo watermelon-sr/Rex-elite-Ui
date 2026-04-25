@@ -1,3 +1,4 @@
+-- REX UI-CHAT SPAM: HUB BOX VERSION (FIXED VISIBILITY)
 local Settings = {
     Delay = 1.8, 
     Active = false,
@@ -30,54 +31,52 @@ local LP = game:GetService("Players").LocalPlayer
 local TS = game:GetService("TweenService")
 local CoreGui = game:GetService("CoreGui")
 local ScreenGui = Instance.new("ScreenGui", CoreGui)
-ScreenGui.Name = "RexHubSystem"
+ScreenGui.Name = "RexHub"
 ScreenGui.DisplayOrder = 999
 
--- // HUB BOX (INTRO GUI)
+-- // THE HUB BOX
 local HubBox = Instance.new("Frame", ScreenGui)
 HubBox.Size = UDim2.new(0, 350, 0, 200)
 HubBox.Position = UDim2.new(0.5, -175, 0.5, -100)
 HubBox.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 HubBox.BorderSizePixel = 0
-HubBox.ZIndex = 10 -- Background
+HubBox.Active = true
+HubBox.Draggable = true
 
 local HubCorner = Instance.new("UICorner", HubBox)
 local HubStroke = Instance.new("UIStroke", HubBox)
-HubStroke.Thickness = 3
+HubStroke.Thickness = 4
 HubStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 
 local TitleHeader = Instance.new("TextLabel", HubBox)
-TitleHeader.Size = UDim2.new(1, 0, 0, 50)
+TitleHeader.Size = UDim2.new(1, 0, 0, 60)
 TitleHeader.TextColor3 = Color3.fromRGB(100, 255, 150)
 TitleHeader.Font = Enum.Font.GothamBold
 TitleHeader.TextSize = 28
 TitleHeader.BackgroundTransparency = 1
 TitleHeader.Text = "REX UI-CHAT SPAM"
-TitleHeader.ZIndex = 11 -- Above Box
 
 local SubNote = Instance.new("TextLabel", HubBox)
 SubNote.Size = UDim2.new(0.9, 0, 0, 60)
 SubNote.Position = UDim2.new(0.05, 0, 0.35, 0)
 SubNote.TextColor3 = Color3.new(1, 1, 1)
 SubNote.Font = Enum.Font.GothamMedium
-SubNote.TextSize = 16
+SubNote.TextSize = 17
 SubNote.BackgroundTransparency = 1
 SubNote.TextWrapped = true
 SubNote.Text = "Note- this script is only for ui chat box. Enjoy"
-SubNote.ZIndex = 11 -- Above Box
 
 local ContinueBtn = Instance.new("TextButton", HubBox)
-ContinueBtn.Size = UDim2.new(0, 150, 0, 40)
-ContinueBtn.Position = UDim2.new(0.5, -75, 0.75, 0)
+ContinueBtn.Size = UDim2.new(0, 160, 0, 45)
+ContinueBtn.Position = UDim2.new(0.5, -80, 0.72, 0)
 ContinueBtn.BackgroundColor3 = Color3.fromRGB(100, 255, 150)
 ContinueBtn.TextColor3 = Color3.new(0, 0, 0)
 ContinueBtn.Font = Enum.Font.GothamBold
-ContinueBtn.TextSize = 18
+ContinueBtn.TextSize = 20
 ContinueBtn.Text = "Continue"
-ContinueBtn.ZIndex = 12 -- Top
 Instance.new("UICorner", ContinueBtn)
 
--- // MAIN GUI (REX UI-CHAT SPAM)
+-- // MAIN UI (HIDDEN UNTIL CONTINUE)
 local RToggle = Instance.new("TextButton", ScreenGui)
 RToggle.Size = UDim2.new(0, 55, 0, 55); RToggle.Position = UDim2.new(0.02, 0, 0.45, 0); RToggle.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 RToggle.Text = "R"; RToggle.TextColor3 = Color3.new(1, 1, 1); RToggle.Font = Enum.Font.GothamBold; RToggle.TextSize = 25; RToggle.Draggable = true; RToggle.Visible = false
@@ -94,7 +93,7 @@ local Title = Instance.new("TextLabel", Main)
 Title.Size = UDim2.new(1, 0, 0, 40); Title.Text = "REX UI-CHAT SPAM"; Title.TextColor3 = Color3.new(1,1,1); Title.Font = Enum.Font.GothamBold; Title.BackgroundTransparency = 1
 
 local DynamicInput = Instance.new("TextBox", Main)
-DynamicInput.Size = UDim2.new(0.9, 0, 0, 40); DynamicInput.Position = UDim2.new(0.05, 0, 0.2, 0); DynamicInput.PlaceholderText = "TARGET NAME"; DynamicInput.BackgroundColor3 = Color3.fromRGB(25, 25, 25); DynamicInput.TextColor3 = Color3.new(1, 1, 1)
+DynamicInput.Size = UDim2.new(0.9, 0, 0, 40); DynamicInput.Position = UDim2.new(0.05, 0, 0.2, 0); DynamicInput.PlaceholderText = "TARGET NAME"; DynamicInput.BackgroundColor3 = Color3.fromRGB(25, 25, 25); DynamicInput.TextColor3 = Color3.new(1, 1, 1); DynamicInput.Text = ""
 Instance.new("UICorner", DynamicInput)
 
 local DelayInput = Instance.new("TextBox", Main)
@@ -106,19 +105,17 @@ FolderFrame.Size = UDim2.new(1, 0, 0, 0); FolderFrame.Position = UDim2.new(0, 0,
 local Scroll = Instance.new("ScrollingFrame", FolderFrame); Scroll.Size = UDim2.new(1, 0, 1, 0); Scroll.BackgroundTransparency = 1; Scroll.CanvasSize = UDim2.new(0, 0, 2.2, 0); Scroll.ScrollBarThickness = 4
 Instance.new("UIListLayout", Scroll)
 
--- // CONTINUE ACTION
+-- // BUTTON LOGIC
 ContinueBtn.MouseButton1Click:Connect(function()
     HubBox:Destroy()
     RToggle.Visible = true
 end)
 
--- // ENGINE
 local function SilentSend(msg)
-    local finalMsg = msg .. " " .. string.rep(Settings.InvisibleChar, math.random(1, 3))
+    local finalMsg = msg .. " " .. string.rep(Settings.InvisibleChar, math.random(1, 5))
     for _, obj in pairs(LP.PlayerGui:GetDescendants()) do
         if obj:IsA("TextBox") and obj.Visible and obj.Parent.Name ~= "Main" then
-            -- Targeted custom chatbox detection
-            if (obj.PlaceholderText or ""):lower():find("click here to chat") or obj.Name:lower():find("chatbox") then
+            if (obj.PlaceholderText or ""):lower():find("click here to chat") then
                 obj.Text = finalMsg
                 if getconnections then
                     local conns = getconnections(obj.FocusLost)
@@ -132,7 +129,6 @@ local function SilentSend(msg)
     end
 end
 
--- // MODES
 local function StartSpam(mode)
     Settings.Active = false; task.wait(0.1); Settings.Active = true
     local userInput = DynamicInput.Text
@@ -150,10 +146,8 @@ local function StartSpam(mode)
                 l = (l >= #Settings.LongRoasts) and 1 or l + 1
                 local currentSym = Settings.Symbols[sIndex]
                 sIndex = (sIndex >= #Settings.Symbols) and 1 or sIndex + 1
-                
-                -- STRICT CHARACTER COUNT (Max 190 to avoid game block)
                 local textPart = " " .. target .. " " .. roast
-                local fillerCount = math.floor((190 - #textPart) / #currentSym)
+                local fillerCount = math.floor((194 - #textPart) / #currentSym)
                 msg = (fillerCount > 0 and string.rep(currentSym, fillerCount) or "") .. textPart
             elseif mode == "Custom" then
                 if userInput ~= "" then msg = userInput else Settings.Active = false end
@@ -184,11 +178,12 @@ MenuBtn.MouseButton1Click:Connect(function()
     MenuBtn.Text = open and "CLOSE MODES ▲" or "OPEN MODES ▼"
 end)
 
--- // RGB THICKNESS LOOP
+-- // RGB LOOP
 task.spawn(function()
     while task.wait() do
         local c = Color3.fromHSV(tick() % 5 / 5, 1, 1)
-        MainStroke.Color = c; RStroke.Color = c
+        MainStroke.Color = c
+        RStroke.Color = c
         if HubBox and HubBox.Parent then HubStroke.Color = c end
     end
 end)
