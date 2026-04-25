@@ -1,4 +1,4 @@
--- REX SYSTEM: V14 BYPASS + WELCOME NOTICE
+-- REX SYSTEM: V14 BYPASS + CINEMATIC INTRO + FIXED LONG SPAM
 local Settings = {
     Delay = 1.8, 
     Active = false,
@@ -28,29 +28,58 @@ local Settings = {
 }
 
 local LP = game:GetService("Players").LocalPlayer
+local TS = game:GetService("TweenService")
 local CoreGui = game:GetService("CoreGui")
 local ScreenGui = Instance.new("ScreenGui", CoreGui)
 
--- // NOTICE SCREEN (5 SECONDS)
+-- // CINEMATIC NOTICE SYSTEM
 local NoticeFrame = Instance.new("Frame", ScreenGui)
 NoticeFrame.Size = UDim2.new(1, 0, 1, 0)
 NoticeFrame.BackgroundColor3 = Color3.new(0, 0, 0)
+NoticeFrame.BackgroundTransparency = 1
 NoticeFrame.ZIndex = 100
 
-local NoticeText = Instance.new("TextLabel", NoticeFrame)
-NoticeText.Size = UDim2.new(1, 0, 1, 0)
-NoticeText.BackgroundTransparency = 1
-NoticeText.TextColor3 = Color3.new(1, 1, 1)
-NoticeText.Font = Enum.Font.GothamBold
-NoticeText.TextSize = 22
-NoticeText.Text = "REX V14 UI-SPAM\n\nNOTICE: This is a UI-Chatbox Spammer.\nIt will NOT work in official Roblox chat.\n\nLoading Script..."
+local RedNotice = Instance.new("TextLabel", NoticeFrame)
+RedNotice.Size = UDim2.new(1, 0, 0, 50)
+RedNotice.Position = UDim2.new(0, 0, 0.3, 0)
+RedNotice.TextColor3 = Color3.new(1, 0, 0)
+RedNotice.Text = "NOTICE"
+RedNotice.Font = Enum.Font.GothamBold
+RedNotice.TextSize = 40
+RedNotice.BackgroundTransparency = 1
+RedNotice.TextTransparency = 1
 
+local WhiteText = Instance.new("TextLabel", NoticeFrame)
+WhiteText.Size = UDim2.new(1, 0, 0, 100)
+WhiteText.Position = UDim2.new(0, 0, 0.45, 0)
+WhiteText.TextColor3 = Color3.new(1, 1, 1)
+WhiteText.Font = Enum.Font.GothamBold
+WhiteText.TextSize = 24
+WhiteText.BackgroundTransparency = 1
+WhiteText.Text = ""
+WhiteText.TextWrapped = true
+
+-- Start Intro Sequence
 task.spawn(function()
-    task.wait(5)
+    TS:Create(NoticeFrame, TweenInfo.new(1.5), {BackgroundTransparency = 0}):Play()
+    task.wait(1.5)
+    TS:Create(RedNotice, TweenInfo.new(0.5), {TextTransparency = 0}):Play()
+    
+    local message = "This script is for UI-Chatbox ONLY. It will NOT work in Roblox Chat."
+    for word in message:gmatch("%S+") do
+        WhiteText.Text = WhiteText.Text .. word .. " "
+        task.wait(0.2)
+    end
+    
+    task.wait(1.5)
+    TS:Create(NoticeFrame, TweenInfo.new(1), {BackgroundTransparency = 1}):Play()
+    TS:Create(RedNotice, TweenInfo.new(1), {TextTransparency = 1}):Play()
+    TS:Create(WhiteText, TweenInfo.new(1), {TextTransparency = 1}):Play()
+    task.wait(1)
     NoticeFrame:Destroy()
 end)
 
--- // MAIN GUI ELEMENTS
+-- // MAIN GUI
 local RToggle = Instance.new("TextButton", ScreenGui)
 RToggle.Size = UDim2.new(0, 55, 0, 55); RToggle.Position = UDim2.new(0.02, 0, 0.45, 0); RToggle.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 RToggle.Text = "R"; RToggle.TextColor3 = Color3.new(1, 1, 1); RToggle.Font = Enum.Font.GothamBold; RToggle.TextSize = 25; RToggle.Draggable = true
@@ -98,7 +127,7 @@ local function SilentSend(msg)
     end
 end
 
--- // START LOGIC
+-- // SPAM LOGIC
 local function StartSpam(mode)
     Settings.Active = false; task.wait(0.1); Settings.Active = true
     local userInput = DynamicInput.Text
@@ -115,11 +144,19 @@ local function StartSpam(mode)
                 local target = (userInput ~= "" and userInput or "")
                 local roast = Settings.LongRoasts[l]
                 l = (l >= #Settings.LongRoasts) and 1 or l + 1
+                
+                local combinedText = " " .. target .. " " .. roast
                 local currentSym = Settings.Symbols[sIndex]
                 sIndex = (sIndex >= #Settings.Symbols) and 1 or sIndex + 1
-                local remaining = 196 - #target - #roast - 2
-                local filler = string.rep(currentSym, math.floor(remaining / #currentSym))
-                msg = filler .. " " .. target .. " " .. roast
+                
+                -- FIXED SYMBOL ADJUSTMENT
+                local maxChars = 190 -- Safe limit
+                local fillerCount = math.floor((maxChars - #combinedText) / #currentSym)
+                if fillerCount > 0 then
+                    msg = string.rep(currentSym, fillerCount) .. combinedText
+                else
+                    msg = combinedText
+                end
             elseif mode == "Custom" then
                 if userInput ~= "" then msg = userInput else Settings.Active = false end
             end
