@@ -1,0 +1,160 @@
+-- REX SYSTEM: V14 BYPASS + WELCOME NOTICE
+local Settings = {
+    Delay = 1.8, 
+    Active = false,
+    InvisibleChar = "\226\128\139",
+    Symbols = {"@", "~", "<>", "^"},
+    
+    ShortMessages = {
+        [1] = "Kɪ Mᴀᴀ Pᴇʟᴅɪᴀ Rᴇx अब्बू Nᴇ 😹👑",
+        [2] = "Kɪ Mᴀᴀ Kᴇ Bʜᴏꜱᴅᴇ Mᴇ Rᴇx अब्बू Nᴇ Mᴜᴛᴀ 🤢🔥",
+        [3] = "Tᴀᴋʟᴜ Rᴇx अब्बू Kɪ GULAMI Kʀʀ Rʜᴇ 🤢🔥💞",
+        [4] = "Kɪ Mᴀᴀ Mᴀʀʀ Gʏɪ 😩🔥🤲🏻",
+        [5] = "Cʜᴜᴘ Cʜᴀᴡ Cʜᴀᴡ Kʀɴᴇ Wᴀʟᴇ Kᴜᴛɪʏᴇ 😭🖕🏻🔥",
+        [6] = "Bᴇᴛᴀ Sᴀᴀɴs Aʀʜɪ H Cʏᴀ? Yᴀ Oxʏɢᴇɴ Bʟᴏᴄᴋ Hᴏɢʏɪ 🤢🦶🏿🔥",
+        [7] = "Tᴇʀᴇ Tᴀᴋʟᴇ Bᴀᴀᴘ Kᴇ Sᴀᴀʀ Pʀ Aᴀɢ Lɢᴀᴋᴇ TᴍᴋB Mᴇ Lᴀᴀᴛ Gʜᴜsᴀᴅᴜɴɢᴀ ✌🏻🔥",
+        [8] = "Kɪ Mᴀᴀ Kᴀ Sᴀᴀᴅᴀ ʙʜᴏsᴅᴀ ɴᴀɴɢᴀ ᴋʀᴅɪʏᴀ Rᴇx ɴᴇ 🤢🔥",
+        [9] = "Tᴇʀɪ Mᴀᴀ Kɪ Cʜᴜᴛ Mᴇ Gᴏʟɪ Mᴀᴀʀ Dᴜɴɢᴀ ʙᴇᴛᴀ 😩🔥",
+        [10] = "Rᴇx Aʙʙᴜ Sᴇ Pᴀɴɢᴀ Mᴀᴛ Lᴇ ʙʜɪᴋʜᴀʀɪ 😹👑"
+    },
+    
+    LongRoasts = {
+        [1] = "Tᴇʀɪ Mᴀ Kᴏ Bᴜʀɢᴇʀ Kʜᴀᴋᴇ ᴄᴏᴅᴜɴɢᴀ Gʜᴀʀ Gʜᴀʀ 🍔★",
+        [2] = "Sᴘᴀᴍᴍᴇʀ Bᴀɴᴇɢᴀ Rɴᴅʏᴋᴇ Gᴜʟᴀᴀᴍ Lᴜɴᴅ Cʜᴜs 😄❌",
+        [3] = "Tᴇʀɪ Mᴀ Jᴀɢɢᴜ Kᴀ Lᴜɴᴅ Lᴇᴋᴇ Nᴀɴᴅᴀʀ Kɪ Tᴅᴀ Uᴄʜʟᴛɪ Eʏ 😭💔",
+        [4] = "Sᴜɴᴀ Eʏ Tᴇʀɪ Mᴀ Rᴀɪʟ Mᴇ Hɪᴊᴅɪ Bᴀɴᴋᴇ Gʜᴜᴍᴛɪ ʜ 🤍🤎🧡💙",
+        [5] = "ᴡᴇᴀᴋ ᴋᴇᴇᴅᴇ ᴄʜᴜᴅᴀɪ ᴋʜᴀ 🧸"
+    }
+}
+
+local LP = game:GetService("Players").LocalPlayer
+local CoreGui = game:GetService("CoreGui")
+local ScreenGui = Instance.new("ScreenGui", CoreGui)
+
+-- // NOTICE SCREEN (5 SECONDS)
+local NoticeFrame = Instance.new("Frame", ScreenGui)
+NoticeFrame.Size = UDim2.new(1, 0, 1, 0)
+NoticeFrame.BackgroundColor3 = Color3.new(0, 0, 0)
+NoticeFrame.ZIndex = 100
+
+local NoticeText = Instance.new("TextLabel", NoticeFrame)
+NoticeText.Size = UDim2.new(1, 0, 1, 0)
+NoticeText.BackgroundTransparency = 1
+NoticeText.TextColor3 = Color3.new(1, 1, 1)
+NoticeText.Font = Enum.Font.GothamBold
+NoticeText.TextSize = 22
+NoticeText.Text = "REX V14 UI-SPAM\n\nNOTICE: This is a UI-Chatbox Spammer.\nIt will NOT work in official Roblox chat.\n\nLoading Script..."
+
+task.spawn(function()
+    task.wait(5)
+    NoticeFrame:Destroy()
+end)
+
+-- // MAIN GUI ELEMENTS
+local RToggle = Instance.new("TextButton", ScreenGui)
+RToggle.Size = UDim2.new(0, 55, 0, 55); RToggle.Position = UDim2.new(0.02, 0, 0.45, 0); RToggle.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+RToggle.Text = "R"; RToggle.TextColor3 = Color3.new(1, 1, 1); RToggle.Font = Enum.Font.GothamBold; RToggle.TextSize = 25; RToggle.Draggable = true
+Instance.new("UICorner", RToggle).CornerRadius = UDim.new(1, 0)
+local RStroke = Instance.new("UIStroke", RToggle); RStroke.Thickness = 3
+
+local Main = Instance.new("Frame", ScreenGui)
+Main.Size = UDim2.new(0, 260, 0, 220); Main.Position = UDim2.new(0.5, -130, 0.5, -110); Main.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+Main.Visible = false; Main.Active = true; Main.Draggable = true
+Instance.new("UICorner", Main)
+local MainStroke = Instance.new("UIStroke", Main); MainStroke.Thickness = 3
+
+local Title = Instance.new("TextLabel", Main)
+Title.Size = UDim2.new(1, 0, 0, 40); Title.Text = "REX V14 ELITE"; Title.TextColor3 = Color3.new(1,1,1); Title.Font = Enum.Font.GothamBold; Title.BackgroundTransparency = 1
+
+local DynamicInput = Instance.new("TextBox", Main)
+DynamicInput.Size = UDim2.new(0.9, 0, 0, 40); DynamicInput.Position = UDim2.new(0.05, 0, 0.2, 0); DynamicInput.PlaceholderText = "TARGET NAME"; DynamicInput.BackgroundColor3 = Color3.fromRGB(25, 25, 25); DynamicInput.TextColor3 = Color3.new(1, 1, 1); DynamicInput.Text = ""
+Instance.new("UICorner", DynamicInput)
+
+local DelayInput = Instance.new("TextBox", Main)
+DelayInput.Size = UDim2.new(0.9, 0, 0, 30); DelayInput.Position = UDim2.new(0.05, 0, 0.42, 0); DelayInput.PlaceholderText = "DELAY (SEC)"; DelayInput.Text = "1.8"; DelayInput.BackgroundColor3 = Color3.fromRGB(25, 25, 25); DelayInput.TextColor3 = Color3.new(1, 1, 0)
+Instance.new("UICorner", DelayInput)
+
+local FolderFrame = Instance.new("Frame", Main)
+FolderFrame.Size = UDim2.new(1, 0, 0, 0); FolderFrame.Position = UDim2.new(0, 0, 1, 0); FolderFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15); FolderFrame.ClipsDescendants = true
+local Scroll = Instance.new("ScrollingFrame", FolderFrame); Scroll.Size = UDim2.new(1, 0, 1, 0); Scroll.BackgroundTransparency = 1; Scroll.CanvasSize = UDim2.new(0, 0, 2.2, 0); Scroll.ScrollBarThickness = 4
+Instance.new("UIListLayout", Scroll)
+
+-- // ENGINE
+local function SilentSend(msg)
+    local finalMsg = msg .. " " .. string.rep(Settings.InvisibleChar, math.random(1, 5))
+    for _, obj in pairs(LP.PlayerGui:GetDescendants()) do
+        if obj:IsA("TextBox") and obj.Visible and obj.Parent.Name ~= "Main" then
+            if (obj.PlaceholderText or ""):lower():find("click here to chat") then
+                obj.Text = finalMsg
+                if getconnections then
+                    local conns = getconnections(obj.FocusLost)
+                    if conns[1] then conns[1]:Fire(true) end
+                end
+                task.wait(0.05)
+                obj.Text = ""
+                break
+            end
+        end
+    end
+end
+
+-- // START LOGIC
+local function StartSpam(mode)
+    Settings.Active = false; task.wait(0.1); Settings.Active = true
+    local userInput = DynamicInput.Text
+    local d = tonumber(DelayInput.Text) or 1.8
+    
+    task.spawn(function()
+        local i, l, sIndex = 1, 1, 1
+        while Settings.Active do
+            local msg = ""
+            if mode == "Short" then
+                msg = (userInput ~= "" and userInput .. " " or "") .. Settings.ShortMessages[i]
+                i = (i >= #Settings.ShortMessages) and 1 or i + 1
+            elseif mode == "Long" then
+                local target = (userInput ~= "" and userInput or "")
+                local roast = Settings.LongRoasts[l]
+                l = (l >= #Settings.LongRoasts) and 1 or l + 1
+                local currentSym = Settings.Symbols[sIndex]
+                sIndex = (sIndex >= #Settings.Symbols) and 1 or sIndex + 1
+                local remaining = 196 - #target - #roast - 2
+                local filler = string.rep(currentSym, math.floor(remaining / #currentSym))
+                msg = filler .. " " .. target .. " " .. roast
+            elseif mode == "Custom" then
+                if userInput ~= "" then msg = userInput else Settings.Active = false end
+            end
+            if msg ~= "" then SilentSend(msg) end
+            task.wait(d)
+        end
+    end)
+end
+
+-- // UI BUTTONS
+local function CreateBtn(txt, color, callback)
+    local b = Instance.new("TextButton", Scroll)
+    b.Size = UDim2.new(1, 0, 0, 38); b.Text = txt; b.BackgroundColor3 = color; b.TextColor3 = Color3.new(1,1,1); b.Font = Enum.Font.GothamBold; b.MouseButton1Click:Connect(callback)
+end
+
+CreateBtn("START SHORT SPAM", Color3.fromRGB(40,40,40), function() StartSpam("Short") end)
+CreateBtn("START LONG SPAM", Color3.fromRGB(55,55,55), function() StartSpam("Long") end)
+CreateBtn("START CUSTOM SPAM", Color3.fromRGB(0,80,50), function() StartSpam("Custom") end)
+CreateBtn("FORCE STOP", Color3.fromRGB(150,0,0), function() Settings.Active = false end)
+
+local MenuBtn = Instance.new("TextButton", Main)
+MenuBtn.Size = UDim2.new(0.9, 0, 0, 35); MenuBtn.Position = UDim2.new(0.05, 0, 0.75, 0); MenuBtn.Text = "OPEN MODES ▼"; MenuBtn.BackgroundColor3 = Color3.fromRGB(0, 120, 255); MenuBtn.TextColor3 = Color3.new(1,1,1); Instance.new("UICorner", MenuBtn)
+
+local open = false
+MenuBtn.MouseButton1Click:Connect(function()
+    open = not open
+    FolderFrame:TweenSize(UDim2.new(1, 0, 0, open and 150 or 0), "Out", "Quart", 0.3)
+    MenuBtn.Text = open and "CLOSE MODES ▲" or "OPEN MODES ▼"
+end)
+
+task.spawn(function()
+    while task.wait() do
+        local c = Color3.fromHSV(tick() % 5 / 5, 1, 1)
+        MainStroke.Color = c; RStroke.Color = c
+    end
+end)
+
+RToggle.MouseButton1Click:Connect(function() Main.Visible = not Main.Visible end)
