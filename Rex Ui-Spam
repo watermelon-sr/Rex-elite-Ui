@@ -30,15 +30,16 @@ local LP = game:GetService("Players").LocalPlayer
 local TS = game:GetService("TweenService")
 local CoreGui = game:GetService("CoreGui")
 local ScreenGui = Instance.new("ScreenGui", CoreGui)
+ScreenGui.Name = "RexHubSystem"
 ScreenGui.DisplayOrder = 999
 
--- // CENTERED HUB BOX (FIXED: NO FULLSCREEN BACKGROUND)
+-- // HUB BOX (INTRO GUI)
 local HubBox = Instance.new("Frame", ScreenGui)
 HubBox.Size = UDim2.new(0, 350, 0, 200)
 HubBox.Position = UDim2.new(0.5, -175, 0.5, -100)
 HubBox.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 HubBox.BorderSizePixel = 0
-HubBox.ZIndex = 5
+HubBox.ZIndex = 10 -- Background
 
 local HubCorner = Instance.new("UICorner", HubBox)
 local HubStroke = Instance.new("UIStroke", HubBox)
@@ -49,9 +50,10 @@ local TitleHeader = Instance.new("TextLabel", HubBox)
 TitleHeader.Size = UDim2.new(1, 0, 0, 50)
 TitleHeader.TextColor3 = Color3.fromRGB(100, 255, 150)
 TitleHeader.Font = Enum.Font.GothamBold
-TitleHeader.TextSize = 26
+TitleHeader.TextSize = 28
 TitleHeader.BackgroundTransparency = 1
 TitleHeader.Text = "REX UI-CHAT SPAM"
+TitleHeader.ZIndex = 11 -- Above Box
 
 local SubNote = Instance.new("TextLabel", HubBox)
 SubNote.Size = UDim2.new(0.9, 0, 0, 60)
@@ -62,18 +64,20 @@ SubNote.TextSize = 16
 SubNote.BackgroundTransparency = 1
 SubNote.TextWrapped = true
 SubNote.Text = "Note- this script is only for ui chat box. Enjoy"
+SubNote.ZIndex = 11 -- Above Box
 
 local ContinueBtn = Instance.new("TextButton", HubBox)
-ContinueBtn.Size = UDim2.new(0, 140, 0, 35)
-ContinueBtn.Position = UDim2.new(0.5, -70, 0.75, 0)
+ContinueBtn.Size = UDim2.new(0, 150, 0, 40)
+ContinueBtn.Position = UDim2.new(0.5, -75, 0.75, 0)
 ContinueBtn.BackgroundColor3 = Color3.fromRGB(100, 255, 150)
 ContinueBtn.TextColor3 = Color3.new(0, 0, 0)
 ContinueBtn.Font = Enum.Font.GothamBold
 ContinueBtn.TextSize = 18
 ContinueBtn.Text = "Continue"
+ContinueBtn.ZIndex = 12 -- Top
 Instance.new("UICorner", ContinueBtn)
 
--- // MAIN SCRIPT ELEMENTS (HIDDEN UNTIL CONTINUE)
+-- // MAIN GUI (REX UI-CHAT SPAM)
 local RToggle = Instance.new("TextButton", ScreenGui)
 RToggle.Size = UDim2.new(0, 55, 0, 55); RToggle.Position = UDim2.new(0.02, 0, 0.45, 0); RToggle.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 RToggle.Text = "R"; RToggle.TextColor3 = Color3.new(1, 1, 1); RToggle.Font = Enum.Font.GothamBold; RToggle.TextSize = 25; RToggle.Draggable = true; RToggle.Visible = false
@@ -102,17 +106,19 @@ FolderFrame.Size = UDim2.new(1, 0, 0, 0); FolderFrame.Position = UDim2.new(0, 0,
 local Scroll = Instance.new("ScrollingFrame", FolderFrame); Scroll.Size = UDim2.new(1, 0, 1, 0); Scroll.BackgroundTransparency = 1; Scroll.CanvasSize = UDim2.new(0, 0, 2.2, 0); Scroll.ScrollBarThickness = 4
 Instance.new("UIListLayout", Scroll)
 
--- // BUTTONS
+-- // CONTINUE ACTION
 ContinueBtn.MouseButton1Click:Connect(function()
     HubBox:Destroy()
     RToggle.Visible = true
 end)
 
+-- // ENGINE
 local function SilentSend(msg)
-    local finalMsg = msg .. " " .. string.rep(Settings.InvisibleChar, math.random(1, 5))
+    local finalMsg = msg .. " " .. string.rep(Settings.InvisibleChar, math.random(1, 3))
     for _, obj in pairs(LP.PlayerGui:GetDescendants()) do
         if obj:IsA("TextBox") and obj.Visible and obj.Parent.Name ~= "Main" then
-            if (obj.PlaceholderText or ""):lower():find("click here to chat") then
+            -- Targeted custom chatbox detection
+            if (obj.PlaceholderText or ""):lower():find("click here to chat") or obj.Name:lower():find("chatbox") then
                 obj.Text = finalMsg
                 if getconnections then
                     local conns = getconnections(obj.FocusLost)
@@ -126,6 +132,7 @@ local function SilentSend(msg)
     end
 end
 
+-- // MODES
 local function StartSpam(mode)
     Settings.Active = false; task.wait(0.1); Settings.Active = true
     local userInput = DynamicInput.Text
@@ -143,8 +150,10 @@ local function StartSpam(mode)
                 l = (l >= #Settings.LongRoasts) and 1 or l + 1
                 local currentSym = Settings.Symbols[sIndex]
                 sIndex = (sIndex >= #Settings.Symbols) and 1 or sIndex + 1
+                
+                -- STRICT CHARACTER COUNT (Max 190 to avoid game block)
                 local textPart = " " .. target .. " " .. roast
-                local fillerCount = math.floor((194 - #textPart) / #currentSym)
+                local fillerCount = math.floor((190 - #textPart) / #currentSym)
                 msg = (fillerCount > 0 and string.rep(currentSym, fillerCount) or "") .. textPart
             elseif mode == "Custom" then
                 if userInput ~= "" then msg = userInput else Settings.Active = false end
@@ -179,9 +188,8 @@ end)
 task.spawn(function()
     while task.wait() do
         local c = Color3.fromHSV(tick() % 5 / 5, 1, 1)
-        MainStroke.Color = c
-        RStroke.Color = c
-        if HubBox then HubStroke.Color = c end
+        MainStroke.Color = c; RStroke.Color = c
+        if HubBox and HubBox.Parent then HubStroke.Color = c end
     end
 end)
 
