@@ -1,3 +1,4 @@
+-- REX UI-CHAT SPAM: ARES RECHAT OPTIMIZED
 local Settings = {
     Delay = 1.8, 
     Active = false,
@@ -30,10 +31,10 @@ local LP = game:GetService("Players").LocalPlayer
 local TS = game:GetService("TweenService")
 local CoreGui = game:GetService("CoreGui")
 local ScreenGui = Instance.new("ScreenGui", CoreGui)
-ScreenGui.Name = "RexFinalUI"
+ScreenGui.Name = "RexFinalAres"
 ScreenGui.DisplayOrder = 999
 
--- // INTRO HUB BOX
+-- // HUB BOX
 local HubBox = Instance.new("Frame", ScreenGui)
 HubBox.Size = UDim2.new(0, 350, 0, 200); HubBox.Position = UDim2.new(0.5, -175, 0.5, -100)
 HubBox.BackgroundColor3 = Color3.fromRGB(12, 12, 12); HubBox.BorderSizePixel = 0; HubBox.Active = true; HubBox.Draggable = true
@@ -61,9 +62,6 @@ Main.Size = UDim2.new(0, 260, 0, 220); Main.Position = UDim2.new(0.5, -130, 0.5,
 Instance.new("UICorner", Main)
 local MainStroke = Instance.new("UIStroke", Main); MainStroke.Thickness = 3
 
-local Title = Instance.new("TextLabel", Main)
-Title.Size = UDim2.new(1, 0, 0, 40); Title.Text = "REX UI-CHAT SPAM"; Title.TextColor3 = Color3.new(1,1,1); Title.Font = Enum.Font.GothamBold; Title.BackgroundTransparency = 1
-
 local DynamicInput = Instance.new("TextBox", Main)
 DynamicInput.Size = UDim2.new(0.9, 0, 0, 40); DynamicInput.Position = UDim2.new(0.05, 0, 0.2, 0); DynamicInput.PlaceholderText = "TARGET NAME"; DynamicInput.BackgroundColor3 = Color3.fromRGB(25, 25, 25); DynamicInput.TextColor3 = Color3.new(1, 1, 1)
 Instance.new("UICorner", DynamicInput)
@@ -77,31 +75,33 @@ FolderFrame.Size = UDim2.new(1, 0, 0, 0); FolderFrame.Position = UDim2.new(0, 0,
 local Scroll = Instance.new("ScrollingFrame", FolderFrame); Scroll.Size = UDim2.new(1, 0, 1, 0); Scroll.BackgroundTransparency = 1; Scroll.CanvasSize = UDim2.new(0, 0, 2.2, 0); Scroll.ScrollBarThickness = 4
 Instance.new("UIListLayout", Scroll)
 
--- // ELITE SMART SEND ENGINE
+-- // TARGETED SEND FOR ARES RECHAT
 local function UniversalSend(msg)
     local finalMsg = msg .. " " .. string.rep(Settings.InvisibleChar, math.random(1, 3))
     for _, obj in pairs(LP.PlayerGui:GetDescendants()) do
+        -- Detect the ARES Rechat input box or similar
         if obj:IsA("TextBox") and obj.Visible and obj.Parent.Name ~= "Main" then
-            if (obj.PlaceholderText or ""):lower():find("click here to chat") or (obj.Text:lower():find("click here")) then
+            if (obj.PlaceholderText or ""):lower():find("type a message") or (obj.Text:lower():find("click here")) then
                 obj.Text = finalMsg
-                task.wait(0.08) -- Guaranteed registration
+                task.wait(0.1) -- Time for the UI to register the text
                 
-                -- Check for Send Buttons (arrows, "Send", icon buttons)
-                local sentViaBtn = false
-                for _, btn in pairs(obj.Parent:GetDescendants()) do
-                    if (btn:IsA("ImageButton") or btn:IsA("TextButton")) and btn.Visible then
-                        if btn.Name:lower():find("send") or (btn:IsA("TextLabel") and btn.Text:find(">>")) or btn.Name:lower():find("submit") then
+                local sent = false
+                -- Specific check for the custom ">>" button found in your screenshot
+                for _, sibling in pairs(obj.Parent:GetDescendants()) do
+                    if (sibling:IsA("TextButton") or sibling:IsA("ImageButton")) and sibling.Visible then
+                        if sibling.Text:find(">>") or sibling.Name:lower():find("send") then
                             if getconnections then
-                                for _, conn in pairs(getconnections(btn.MouseButton1Click)) do conn:Fire() end
+                                for _, conn in pairs(getconnections(sibling.MouseButton1Click)) do
+                                    conn:Fire()
+                                    sent = true
+                                end
                             end
-                            sentViaBtn = true
-                            break
                         end
                     end
                 end
                 
-                -- Default Method if no button found
-                if not sentViaBtn and getconnections then
+                -- Fallback to standard send if custom button fail
+                if not sent and getconnections then
                     local conns = getconnections(obj.FocusLost)
                     if conns[1] then conns[1]:Fire(true) end
                 end
@@ -113,7 +113,7 @@ local function UniversalSend(msg)
     end
 end
 
--- // AUTO-ADJUSTING MODES
+-- // SPAM ENGINE
 local function StartSpam(mode)
     Settings.Active = false; task.wait(0.1); Settings.Active = true
     local target = DynamicInput.Text
@@ -132,9 +132,8 @@ local function StartSpam(mode)
                 local curSym = Settings.Symbols[sIndex]
                 sIndex = (sIndex >= #Settings.Symbols) and 1 or sIndex + 1
                 
-                -- AUTO-CALCULATE MAX SYMBOLS
                 local base = (target ~= "" and target .. " " or "") .. roast
-                local maxAllowed = 195 -- Safest limit for Roblox
+                local maxAllowed = 195
                 local spaceNeeded = maxAllowed - #base
                 local repeatTimes = math.floor(spaceNeeded / #curSym)
                 
