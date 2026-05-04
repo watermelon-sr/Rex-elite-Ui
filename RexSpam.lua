@@ -74,8 +74,15 @@ Instance.new("UICorner", DelayInput)
 
 local FolderFrame = Instance.new("Frame", Main)
 FolderFrame.Size = UDim2.new(1, 0, 0, 0); FolderFrame.Position = UDim2.new(0, 0, 1, 0); FolderFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15); FolderFrame.ClipsDescendants = true
-local Scroll = Instance.new("ScrollingFrame", FolderFrame); Scroll.Size = UDim2.new(1, 0, 1, 0); Scroll.BackgroundTransparency = 1; Scroll.CanvasSize = UDim2.new(0, 0, 2.2, 0); Scroll.ScrollBarThickness = 4
+local Scroll = Instance.new("ScrollingFrame", FolderFrame); Scroll.Size = UDim2.new(1, 0, 1, 0); Scroll.BackgroundTransparency = 1; Scroll.CanvasSize = UDim2.new(0, 0, 3.5, 0); Scroll.ScrollBarThickness = 4
 Instance.new("UIListLayout", Scroll)
+
+-- // NEW FEATURE INPUTS
+local RoleInput = Instance.new("TextBox", Scroll)
+RoleInput.Size = UDim2.new(1, 0, 0, 38); RoleInput.PlaceholderText = "ROLE (e.g. CREATOR)"; RoleInput.BackgroundColor3 = Color3.fromRGB(35, 35, 35); RoleInput.TextColor3 = Color3.new(1, 1, 1); RoleInput.Font = Enum.Font.GothamBold
+
+local SpyNameInput = Instance.new("TextBox", Scroll)
+SpyNameInput.Size = UDim2.new(1, 0, 0, 38); SpyNameInput.PlaceholderText = "SPY NAME (FAKE NAME)"; SpyNameInput.BackgroundColor3 = Color3.fromRGB(35, 35, 35); SpyNameInput.TextColor3 = Color3.new(1, 1, 1); SpyNameInput.Font = Enum.Font.GothamBold
 
 -- // ELITE SMART SEND ENGINE
 local function UniversalSend(msg)
@@ -84,9 +91,8 @@ local function UniversalSend(msg)
         if obj:IsA("TextBox") and obj.Visible and obj.Parent.Name ~= "Main" then
             if (obj.PlaceholderText or ""):lower():find("click here to chat") or (obj.Text:lower():find("click here")) then
                 obj.Text = finalMsg
-                task.wait(0.08) -- Guaranteed registration
+                task.wait(0.08)
                 
-                -- Check for Send Buttons (arrows, "Send", icon buttons)
                 local sentViaBtn = false
                 for _, btn in pairs(obj.Parent:GetDescendants()) do
                     if (btn:IsA("ImageButton") or btn:IsA("TextButton")) and btn.Visible then
@@ -100,7 +106,6 @@ local function UniversalSend(msg)
                     end
                 end
                 
-                -- Default Method if no button found
                 if not sentViaBtn and getconnections then
                     local conns = getconnections(obj.FocusLost)
                     if conns[1] then conns[1]:Fire(true) end
@@ -117,6 +122,9 @@ end
 local function StartSpam(mode)
     Settings.Active = false; task.wait(0.1); Settings.Active = true
     local target = DynamicInput.Text
+    local role = RoleInput.Text ~= "" and "["..RoleInput.Text.."] " or ""
+    local spy = SpyNameInput.Text ~= "" and "["..SpyNameInput.Text.."]: " or ""
+    local prefix = role .. spy
     local d = tonumber(DelayInput.Text) or 1.8
     
     task.spawn(function()
@@ -124,7 +132,7 @@ local function StartSpam(mode)
         while Settings.Active do
             local msg = ""
             if mode == "Short" then
-                msg = (target ~= "" and target .. " " or "") .. Settings.ShortMessages[i]
+                msg = prefix .. (target ~= "" and target .. " " or "") .. Settings.ShortMessages[i]
                 i = (i >= #Settings.ShortMessages) and 1 or i + 1
             elseif mode == "Long" then
                 local roast = Settings.LongRoasts[l]
@@ -132,16 +140,15 @@ local function StartSpam(mode)
                 local curSym = Settings.Symbols[sIndex]
                 sIndex = (sIndex >= #Settings.Symbols) and 1 or sIndex + 1
                 
-                -- AUTO-CALCULATE MAX SYMBOLS
-                local base = (target ~= "" and target .. " " or "") .. roast
-                local maxAllowed = 195 -- Safest limit for Roblox
+                local base = prefix .. (target ~= "" and target .. " " or "") .. roast
+                local maxAllowed = 195 
                 local spaceNeeded = maxAllowed - #base
                 local repeatTimes = math.floor(spaceNeeded / #curSym)
                 
                 msg = (repeatTimes > 0 and string.rep(curSym, repeatTimes) or "") .. " " .. base
             elseif mode == "Custom" then
-                msg = target ~= "" and target or ""
-                if msg == "" then Settings.Active = false end
+                msg = prefix .. (target ~= "" and target or "")
+                if msg == prefix then Settings.Active = false end
             end
             
             if msg ~= "" then UniversalSend(msg) end
