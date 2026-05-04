@@ -2,8 +2,6 @@ local Settings = {
     Delay = 1.8, 
     Active = false,
     InvisibleChar = "\226\128\139",
-    -- This string below is the secret to hiding your real name
-    NameBypass = string.rep("\226\128\139", 200), 
     Symbols = {"@", "~", "<>", "^", "*"},
     
     ShortMessages = {
@@ -29,58 +27,85 @@ local Settings = {
 }
 
 local LP = game:GetService("Players").LocalPlayer
+local TS = game:GetService("TweenService")
 local CoreGui = game:GetService("CoreGui")
 local ScreenGui = Instance.new("ScreenGui", CoreGui)
-ScreenGui.Name = "RexFinalV5"
+ScreenGui.Name = "RexFinalUI"
+ScreenGui.DisplayOrder = 999
 
--- // RGB COLOR SYNC
-local CurrentRGB = Color3.new(1,1,1)
-task.spawn(function()
-    while task.wait() do CurrentRGB = Color3.fromHSV(tick() % 5 / 5, 1, 1) end
-end)
-
--- // UI SETUP
+-- // INTRO HUB BOX
 local HubBox = Instance.new("Frame", ScreenGui)
 HubBox.Size = UDim2.new(0, 350, 0, 200); HubBox.Position = UDim2.new(0.5, -175, 0.5, -100)
-HubBox.BackgroundColor3 = Color3.fromRGB(12, 12, 12); HubBox.Active = true; HubBox.Draggable = true
+HubBox.BackgroundColor3 = Color3.fromRGB(12, 12, 12); HubBox.BorderSizePixel = 0; HubBox.Active = true; HubBox.Draggable = true
 Instance.new("UICorner", HubBox)
+local HubStroke = Instance.new("UIStroke", HubBox); HubStroke.Thickness = 4; HubStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+
+local TitleHeader = Instance.new("TextLabel", HubBox)
+TitleHeader.Size = UDim2.new(1, 0, 0, 60); TitleHeader.TextColor3 = Color3.fromRGB(100, 255, 150); TitleHeader.Font = Enum.Font.GothamBold; TitleHeader.TextSize = 28; TitleHeader.BackgroundTransparency = 1; TitleHeader.Text = "REX UI-CHAT SPAM"
+
+local SubNote = Instance.new("TextLabel", HubBox)
+SubNote.Size = UDim2.new(0.9, 0, 0, 60); SubNote.Position = UDim2.new(0.05, 0, 0.35, 0); SubNote.TextColor3 = Color3.new(1, 1, 1); SubNote.Font = Enum.Font.GothamMedium; SubNote.TextSize = 17; SubNote.BackgroundTransparency = 1; SubNote.TextWrapped = true; SubNote.Text = "Note- this script is only for ui chat box. Enjoy"
 
 local ContinueBtn = Instance.new("TextButton", HubBox)
-ContinueBtn.Size = UDim2.new(0, 160, 0, 45); ContinueBtn.Position = UDim2.new(0.5, -80, 0.72, 0); ContinueBtn.Text = "Continue"
+ContinueBtn.Size = UDim2.new(0, 160, 0, 45); ContinueBtn.Position = UDim2.new(0.5, -80, 0.72, 0); ContinueBtn.BackgroundColor3 = Color3.fromRGB(100, 255, 150); ContinueBtn.TextColor3 = Color3.new(0, 0, 0); ContinueBtn.Font = Enum.Font.GothamBold; ContinueBtn.TextSize = 20; ContinueBtn.Text = "Continue"
 Instance.new("UICorner", ContinueBtn)
 
-local Main = Instance.new("Frame", ScreenGui)
-Main.Size = UDim2.new(0, 260, 0, 250); Main.Position = UDim2.new(0.5, -130, 0.5, -110); Main.BackgroundColor3 = Color3.fromRGB(10, 10, 10); Main.Visible = false; Main.Active = true; Main.Draggable = true
-Instance.new("UICorner", Main)
+-- // MAIN GUI
+local RToggle = Instance.new("TextButton", ScreenGui)
+RToggle.Size = UDim2.new(0, 55, 0, 55); RToggle.Position = UDim2.new(0.02, 0, 0.45, 0); RToggle.BackgroundColor3 = Color3.fromRGB(15, 15, 15); RToggle.Text = "R"; RToggle.TextColor3 = Color3.new(1, 1, 1); RToggle.Font = Enum.Font.GothamBold; RToggle.TextSize = 25; RToggle.Draggable = true; RToggle.Visible = false
+Instance.new("UICorner", RToggle).CornerRadius = UDim.new(1, 0)
+local RStroke = Instance.new("UIStroke", RToggle); RStroke.Thickness = 3
 
-local Scroll = Instance.new("ScrollingFrame", Main)
-Scroll.Size = UDim2.new(0.9, 0, 0.5, 0); Scroll.Position = UDim2.new(0.05, 0, 0.45, 0); Scroll.BackgroundTransparency = 1; Scroll.CanvasSize = UDim2.new(0, 0, 4, 0)
+local Main = Instance.new("Frame", ScreenGui)
+Main.Size = UDim2.new(0, 260, 0, 220); Main.Position = UDim2.new(0.5, -130, 0.5, -110); Main.BackgroundColor3 = Color3.fromRGB(10, 10, 10); Main.Visible = false; Main.Active = true; Main.Draggable = true
+Instance.new("UICorner", Main)
+local MainStroke = Instance.new("UIStroke", Main); MainStroke.Thickness = 3
+
+local Title = Instance.new("TextLabel", Main)
+Title.Size = UDim2.new(1, 0, 0, 40); Title.Text = "REX UI-CHAT SPAM"; Title.TextColor3 = Color3.new(1,1,1); Title.Font = Enum.Font.GothamBold; Title.BackgroundTransparency = 1
+
+local DynamicInput = Instance.new("TextBox", Main)
+DynamicInput.Size = UDim2.new(0.9, 0, 0, 40); DynamicInput.Position = UDim2.new(0.05, 0, 0.2, 0); DynamicInput.PlaceholderText = "TARGET NAME"; DynamicInput.BackgroundColor3 = Color3.fromRGB(25, 25, 25); DynamicInput.TextColor3 = Color3.new(1, 1, 1)
+Instance.new("UICorner", DynamicInput)
+
+local DelayInput = Instance.new("TextBox", Main)
+DelayInput.Size = UDim2.new(0.9, 0, 0, 30); DelayInput.Position = UDim2.new(0.05, 0, 0.42, 0); DelayInput.PlaceholderText = "DELAY (SEC)"; DelayInput.Text = "1.8"; DelayInput.BackgroundColor3 = Color3.fromRGB(25, 25, 25); DelayInput.TextColor3 = Color3.new(1, 1, 0)
+Instance.new("UICorner", DelayInput)
+
+local FolderFrame = Instance.new("Frame", Main)
+FolderFrame.Size = UDim2.new(1, 0, 0, 0); FolderFrame.Position = UDim2.new(0, 0, 1, 0); FolderFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15); FolderFrame.ClipsDescendants = true
+local Scroll = Instance.new("ScrollingFrame", FolderFrame); Scroll.Size = UDim2.new(1, 0, 1, 0); Scroll.BackgroundTransparency = 1; Scroll.CanvasSize = UDim2.new(0, 0, 2.2, 0); Scroll.ScrollBarThickness = 4
 Instance.new("UIListLayout", Scroll)
 
-local RoleInput = Instance.new("TextBox", Scroll)
-RoleInput.Size = UDim2.new(1, 0, 0, 35); RoleInput.PlaceholderText = "CUSTOM ROLE"; RoleInput.Text = "CREATOR"
-local SpyInput = Instance.new("TextBox", Scroll)
-SpyInput.Size = UDim2.new(1, 0, 0, 35); SpyInput.PlaceholderText = "SPY NAME"; SpyInput.Text = "RexAbbu"
-local TargetInput = Instance.new("TextBox", Main)
-TargetInput.Size = UDim2.new(0.9, 0, 0, 35); TargetInput.Position = UDim2.new(0.05, 0, 0.15, 0); TargetInput.PlaceholderText = "TARGET NAME"
-
--- // THE SPY ENGINE
+-- // ELITE SMART SEND ENGINE
 local function UniversalSend(msg)
-    -- This pushes your real name out of the box and puts the fake info first
-    local role = RoleInput.Text ~= "" and "["..RoleInput.Text.."] " or ""
-    local spy = SpyInput.Text ~= "" and "["..SpyInput.Text.."]: " or ""
-    local fakeHeader = role .. spy
-    
-    local finalMsg = Settings.NameBypass .. fakeHeader .. msg
-    
+    local finalMsg = msg .. " " .. string.rep(Settings.InvisibleChar, math.random(1, 3))
     for _, obj in pairs(LP.PlayerGui:GetDescendants()) do
         if obj:IsA("TextBox") and obj.Visible and obj.Parent.Name ~= "Main" then
             if (obj.PlaceholderText or ""):lower():find("click here to chat") or (obj.Text:lower():find("click here")) then
-                obj.FocusLost:Connect(function() end)
                 obj.Text = finalMsg
-                task.wait(0.05)
-                -- Force Send
-                game:GetService("VirtualInputManager"):SendKeyEvent(true, Enum.KeyCode.Return, false, game)
+                task.wait(0.08) -- Guaranteed registration
+                
+                -- Check for Send Buttons (arrows, "Send", icon buttons)
+                local sentViaBtn = false
+                for _, btn in pairs(obj.Parent:GetDescendants()) do
+                    if (btn:IsA("ImageButton") or btn:IsA("TextButton")) and btn.Visible then
+                        if btn.Name:lower():find("send") or (btn:IsA("TextLabel") and btn.Text:find(">>")) or btn.Name:lower():find("submit") then
+                            if getconnections then
+                                for _, conn in pairs(getconnections(btn.MouseButton1Click)) do conn:Fire() end
+                            end
+                            sentViaBtn = true
+                            break
+                        end
+                    end
+                end
+                
+                -- Default Method if no button found
+                if not sentViaBtn and getconnections then
+                    local conns = getconnections(obj.FocusLost)
+                    if conns[1] then conns[1]:Fire(true) end
+                end
+                
                 obj.Text = ""
                 break
             end
@@ -88,27 +113,70 @@ local function UniversalSend(msg)
     end
 end
 
--- // MODES
+-- // AUTO-ADJUSTING MODES
 local function StartSpam(mode)
     Settings.Active = false; task.wait(0.1); Settings.Active = true
-    local target = TargetInput.Text
+    local target = DynamicInput.Text
+    local d = tonumber(DelayInput.Text) or 1.8
+    
     task.spawn(function()
-        local i = 1
+        local i, l, sIndex = 1, 1, 1
         while Settings.Active do
-            local msg = (target ~= "" and target .. " " or "") .. Settings.ShortMessages[i]
-            UniversalSend(msg)
-            i = (i >= #Settings.ShortMessages) and 1 or i + 1
-            task.wait(1.8)
+            local msg = ""
+            if mode == "Short" then
+                msg = (target ~= "" and target .. " " or "") .. Settings.ShortMessages[i]
+                i = (i >= #Settings.ShortMessages) and 1 or i + 1
+            elseif mode == "Long" then
+                local roast = Settings.LongRoasts[l]
+                l = (l >= #Settings.LongRoasts) and 1 or l + 1
+                local curSym = Settings.Symbols[sIndex]
+                sIndex = (sIndex >= #Settings.Symbols) and 1 or sIndex + 1
+                
+                -- AUTO-CALCULATE MAX SYMBOLS
+                local base = (target ~= "" and target .. " " or "") .. roast
+                local maxAllowed = 195 -- Safest limit for Roblox
+                local spaceNeeded = maxAllowed - #base
+                local repeatTimes = math.floor(spaceNeeded / #curSym)
+                
+                msg = (repeatTimes > 0 and string.rep(curSym, repeatTimes) or "") .. " " .. base
+            elseif mode == "Custom" then
+                msg = target ~= "" and target or ""
+                if msg == "" then Settings.Active = false end
+            end
+            
+            if msg ~= "" then UniversalSend(msg) end
+            task.wait(d)
         end
     end)
 end
 
--- // BUTTONS
-local function CreateBtn(txt, callback)
-    local b = Instance.new("TextButton", Scroll); b.Size = UDim2.new(1, 0, 0, 35); b.Text = txt; b.MouseButton1Click:Connect(callback)
+-- // UI BUTTONS
+local function CreateBtn(txt, color, callback)
+    local b = Instance.new("TextButton", Scroll); b.Size = UDim2.new(1, 0, 0, 38); b.Text = txt; b.BackgroundColor3 = color; b.TextColor3 = Color3.new(1,1,1); b.Font = Enum.Font.GothamBold; b.MouseButton1Click:Connect(callback)
 end
 
-CreateBtn("START SHORT SPAM", function() StartSpam("Short") end)
-CreateBtn("FORCE STOP", function() Settings.Active = false end)
+CreateBtn("START SHORT SPAM", Color3.fromRGB(40,40,40), function() StartSpam("Short") end)
+CreateBtn("START LONG SPAM", Color3.fromRGB(55,55,55), function() StartSpam("Long") end)
+CreateBtn("START CUSTOM SPAM", Color3.fromRGB(0,80,50), function() StartSpam("Custom") end)
+CreateBtn("FORCE STOP", Color3.fromRGB(150,0,0), function() Settings.Active = false end)
 
-ContinueBtn.MouseButton1Click:Connect(function() HubBox:Destroy(); Main.Visible = true end)
+local MenuBtn = Instance.new("TextButton", Main); MenuBtn.Size = UDim2.new(0.9, 0, 0, 35); MenuBtn.Position = UDim2.new(0.05, 0, 0.75, 0); MenuBtn.Text = "OPEN MODES ▼"; MenuBtn.BackgroundColor3 = Color3.fromRGB(0, 120, 255); MenuBtn.TextColor3 = Color3.new(1,1,1); Instance.new("UICorner", MenuBtn)
+
+local open = false
+MenuBtn.MouseButton1Click:Connect(function()
+    open = not open
+    FolderFrame:TweenSize(UDim2.new(1, 0, 0, open and 150 or 0), "Out", "Quart", 0.3)
+    MenuBtn.Text = open and "CLOSE MODES ▲" or "OPEN MODES ▼"
+end)
+
+ContinueBtn.MouseButton1Click:Connect(function() HubBox:Destroy(); RToggle.Visible = true end)
+RToggle.MouseButton1Click:Connect(function() Main.Visible = not Main.Visible end)
+
+-- // RGB LOOP
+task.spawn(function()
+    while task.wait() do
+        local c = Color3.fromHSV(tick() % 5 / 5, 1, 1)
+        MainStroke.Color = c; RStroke.Color = c
+        if HubBox and HubBox.Parent then HubStroke.Color = c end
+    end
+end)
