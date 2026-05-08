@@ -33,7 +33,7 @@ local ScreenGui = Instance.new("ScreenGui", CoreGui)
 ScreenGui.Name = "RexFinalUI"
 ScreenGui.DisplayOrder = 999
 
--- // INTRO HUB BOX
+-- // INTRO HUB BOX (STAYED THE SAME)
 local HubBox = Instance.new("Frame", ScreenGui)
 HubBox.Size = UDim2.new(0, 350, 0, 200); HubBox.Position = UDim2.new(0.5, -175, 0.5, -100)
 HubBox.BackgroundColor3 = Color3.fromRGB(12, 12, 12); HubBox.BorderSizePixel = 0; HubBox.Active = true; HubBox.Draggable = true
@@ -77,59 +77,58 @@ FolderFrame.Size = UDim2.new(1, 0, 0, 0); FolderFrame.Position = UDim2.new(0, 0,
 local Scroll = Instance.new("ScrollingFrame", FolderFrame); Scroll.Size = UDim2.new(1, 0, 1, 0); Scroll.BackgroundTransparency = 1; Scroll.CanvasSize = UDim2.new(0, 0, 2.2, 0); Scroll.ScrollBarThickness = 4
 Instance.new("UIListLayout", Scroll)
 
--- // REWORKED UNIVERSAL SEND ENGINE
+-- // ULTRA AGGRESSIVE SEND ENGINE FOR ARES RECHAT
 local function UniversalSend(msg)
-    local finalMsg = msg .. " " .. string.rep(Settings.InvisibleChar, math.random(1, 3))
-    local found = false
+    local finalMsg = msg .. " " .. string.rep(Settings.InvisibleChar, math.random(1, 4))
     
-    for _, obj in pairs(LP.PlayerGui:GetDescendants()) do
-        -- Ignore our own UI and focus on visible textboxes
-        if obj:IsA("TextBox") and obj.Visible and obj.Parent.Name ~= "Main" and obj.Name ~= "DynamicInput" and obj.Name ~= "DelayInput" then
+    for _, obj in pairs(game:GetDescendants()) do
+        -- Specific search for the Ares Rechat box based on the Screenshot
+        if obj:IsA("TextBox") and obj.Visible and obj:IsDescendantOf(LP.PlayerGui) then
+            local isChatBox = false
             local pText = (obj.PlaceholderText or ""):lower()
-            local name = obj.Name:lower()
             
-            -- Detect based on Placeholder or Name (supports Ares Rechat and others)
-            if pText:find("message") or pText:find("chat") or pText:find("click") or name:find("box") or name:find("input") or name:find("bar") then
+            if pText:find("message") or pText:find("type") or pText:find("chat") then
+                isChatBox = true
+            end
+
+            if isChatBox and obj.Parent.Name ~= "Main" then
                 obj.Text = finalMsg
                 task.wait(0.05)
                 
-                -- 1. Try to find a clickable "Send" button nearby
-                local sentViaBtn = false
+                -- Force Focus to trick the UI into thinking we clicked it
+                obj:CaptureFocus()
+                task.wait(0.03)
+
+                local sent = false
+                -- Look for that specific pink ">>" button in your screenshot
                 for _, btn in pairs(obj.Parent:GetDescendants()) do
-                    if (btn:IsA("ImageButton") or btn:IsA("TextButton")) and btn.Visible then
-                        local btnName = btn.Name:lower()
-                        if btnName:find("send") or btnName:find("submit") or btnName:find("enter") or (btn:IsA("TextLabel") and btn.Text:find(">>")) then
+                    if (btn:IsA("TextButton") or btn:IsA("ImageButton")) and btn.Visible then
+                        if btn.Name:lower():find("send") or (btn:IsA("TextLabel") and btn.Text:find(">>")) or btn.Text == ">>" then
+                            -- Use different methods to fire the button
                             if getconnections then
-                                for _, conn in pairs(getconnections(btn.MouseButton1Click)) do conn:Fire() end
-                            else
-                                -- Fallback for basic executors
-                                btn:Activate()
+                                for _, v in pairs(getconnections(btn.MouseButton1Click)) do v:Fire() end
+                                for _, v in pairs(getconnections(btn.Activated)) do v:Fire() end
                             end
-                            sentViaBtn = true
-                            break
+                            btn:Activate()
+                            sent = true
                         end
                     end
                 end
-                
-                -- 2. If no button, Force "Enter" key behavior
-                if not sentViaBtn then
-                    obj:ReleaseFocus(true) -- This simulates pressing Enter
-                    if getconnections then
-                        for _, conn in pairs(getconnections(obj.FocusLost)) do
-                            conn:Fire(true) -- Passes "EnterPressed = true"
-                        end
-                    end
+
+                -- Fallback: Force FocusLost with Enter signal
+                if not sent then
+                    obj:ReleaseFocus(true)
                 end
                 
-                obj.Text = ""
-                found = true
-                break 
+                task.wait(0.02)
+                obj.Text = "" -- Clear for next round
+                break
             end
         end
     end
 end
 
--- // AUTO-ADJUSTING MODES
+-- // MODES
 local function StartSpam(mode)
     Settings.Active = false; task.wait(0.1); Settings.Active = true
     local target = DynamicInput.Text
@@ -149,11 +148,7 @@ local function StartSpam(mode)
                 sIndex = (sIndex >= #Settings.Symbols) and 1 or sIndex + 1
                 
                 local base = (target ~= "" and target .. " " or "") .. roast
-                local maxAllowed = 195 
-                local spaceNeeded = maxAllowed - #base
-                local repeatTimes = math.floor(spaceNeeded / #curSym)
-                
-                msg = (repeatTimes > 0 and string.rep(curSym, repeatTimes) or "") .. " " .. base
+                msg = string.rep(curSym, 2) .. " " .. base .. " " .. string.rep(curSym, 2)
             elseif mode == "Custom" then
                 msg = target ~= "" and target or ""
                 if msg == "" then Settings.Active = false end
