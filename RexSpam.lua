@@ -19,9 +19,9 @@ local Settings = {
     
     LongRoasts = {
         [1] = "Tᴇʀɪ Mᴀ Kᴏ Bᴜʀɢᴇʀ Kʜᴀᴋᴇ ᴄᴏᴅᴜɴɢᴀ Gʜᴀʀ Gʜᴀʀ 🍔★",
-        [2] = "Sᴘᴀᴍᴍᴇʀ Bᴀɴᴇɢᴀ Rɴᴅʏᴋᴇ Gᴜʟᴀᴀᴍ Lᴜɴᴅ Cʜᴜs 😄❌",
+        [2] = "SᴘᴀᴍᴍᴇR Bᴀɴᴇɢᴀ Rɴᴅʏᴋᴇ Gᴜʟᴀᴀᴍ Lᴜɴᴅ Cʜᴜs 😄❌",
         [3] = "Tᴇʀɪ Mᴀ Jᴀɢɢᴜ Kᴀ Lᴜɴᴅ Lᴇᴋᴇ BᴀɴᴅᴀR Kɪ Tᴅᴀ Uᴄʜʟᴛɪ Eʏ 😭💔",
-        [4] = "Sᴜɴᴀ Eʏ Tᴇʀɪ Mᴀ Rᴀɪʟ Mᴇ Hɪᴊᴅɪ Bᴀɴᴋᴇ Gʜᴜᴍᴛɪ ʜ 🤍🤎🧡💙",
+        [4] = "Sᴜɴᴀ Eʏ Tᴇʀɪ Mᴀ Rᴀɪʟ Mᴇ Hɪ Jᴅɪ Bᴀɴᴋᴇ Gʜᴜᴍᴛɪ ʜ 🤍🤎🧡💙",
         [5] = "ᴡᴇᴀᴋ ᴋᴇᴇᴅᴇ ᴄʜᴜᴅᴀɪ ᴋʜᴀ 🧸"
     }
 }
@@ -77,22 +77,33 @@ FolderFrame.Size = UDim2.new(1, 0, 0, 0); FolderFrame.Position = UDim2.new(0, 0,
 local Scroll = Instance.new("ScrollingFrame", FolderFrame); Scroll.Size = UDim2.new(1, 0, 1, 0); Scroll.BackgroundTransparency = 1; Scroll.CanvasSize = UDim2.new(0, 0, 2.2, 0); Scroll.ScrollBarThickness = 4
 Instance.new("UIListLayout", Scroll)
 
--- // ELITE SMART SEND ENGINE
+-- // REWORKED UNIVERSAL SEND ENGINE
 local function UniversalSend(msg)
     local finalMsg = msg .. " " .. string.rep(Settings.InvisibleChar, math.random(1, 3))
+    local found = false
+    
     for _, obj in pairs(LP.PlayerGui:GetDescendants()) do
-        if obj:IsA("TextBox") and obj.Visible and obj.Parent.Name ~= "Main" then
-            if (obj.PlaceholderText or ""):lower():find("click here to chat") or (obj.Text:lower():find("click here")) then
+        -- Ignore our own UI and focus on visible textboxes
+        if obj:IsA("TextBox") and obj.Visible and obj.Parent.Name ~= "Main" and obj.Name ~= "DynamicInput" and obj.Name ~= "DelayInput" then
+            local pText = (obj.PlaceholderText or ""):lower()
+            local name = obj.Name:lower()
+            
+            -- Detect based on Placeholder or Name (supports Ares Rechat and others)
+            if pText:find("message") or pText:find("chat") or pText:find("click") or name:find("box") or name:find("input") or name:find("bar") then
                 obj.Text = finalMsg
-                task.wait(0.08) -- Guaranteed registration
+                task.wait(0.05)
                 
-                -- Check for Send Buttons (arrows, "Send", icon buttons)
+                -- 1. Try to find a clickable "Send" button nearby
                 local sentViaBtn = false
                 for _, btn in pairs(obj.Parent:GetDescendants()) do
                     if (btn:IsA("ImageButton") or btn:IsA("TextButton")) and btn.Visible then
-                        if btn.Name:lower():find("send") or (btn:IsA("TextLabel") and btn.Text:find(">>")) or btn.Name:lower():find("submit") then
+                        local btnName = btn.Name:lower()
+                        if btnName:find("send") or btnName:find("submit") or btnName:find("enter") or (btn:IsA("TextLabel") and btn.Text:find(">>")) then
                             if getconnections then
                                 for _, conn in pairs(getconnections(btn.MouseButton1Click)) do conn:Fire() end
+                            else
+                                -- Fallback for basic executors
+                                btn:Activate()
                             end
                             sentViaBtn = true
                             break
@@ -100,14 +111,19 @@ local function UniversalSend(msg)
                     end
                 end
                 
-                -- Default Method if no button found
-                if not sentViaBtn and getconnections then
-                    local conns = getconnections(obj.FocusLost)
-                    if conns[1] then conns[1]:Fire(true) end
+                -- 2. If no button, Force "Enter" key behavior
+                if not sentViaBtn then
+                    obj:ReleaseFocus(true) -- This simulates pressing Enter
+                    if getconnections then
+                        for _, conn in pairs(getconnections(obj.FocusLost)) do
+                            conn:Fire(true) -- Passes "EnterPressed = true"
+                        end
+                    end
                 end
                 
                 obj.Text = ""
-                break
+                found = true
+                break 
             end
         end
     end
@@ -132,9 +148,8 @@ local function StartSpam(mode)
                 local curSym = Settings.Symbols[sIndex]
                 sIndex = (sIndex >= #Settings.Symbols) and 1 or sIndex + 1
                 
-                -- AUTO-CALCULATE MAX SYMBOLS
                 local base = (target ~= "" and target .. " " or "") .. roast
-                local maxAllowed = 195 -- Safest limit for Roblox
+                local maxAllowed = 195 
                 local spaceNeeded = maxAllowed - #base
                 local repeatTimes = math.floor(spaceNeeded / #curSym)
                 
