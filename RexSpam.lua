@@ -18,7 +18,7 @@ local Settings = {
     },
     
     LongRoasts = {
-        [1] = "Tᴇʀɪ Mᴀ Kᴏ Bᴜʀɢᴇʀ Kʜᴀᴋᴇ ᴄᴏᴅᴜɴɢᴀ Gʜᴀʀ Gʜᴀʀ 🍔★",
+        [1] = "Tᴇʀɪ Mᴀ Kᴏ BᴜʀɢᴇR Kʜᴀᴋᴇ ᴄᴏᴅᴜɴɢᴀ GʜᴀR GʜᴀR 🍔★",
         [2] = "SᴘᴀᴍᴍᴇR Bᴀɴᴇɢᴀ Rɴᴅʏᴋᴇ Gᴜʟᴀᴀᴍ Lᴜɴᴅ Cʜᴜs 😄❌",
         [3] = "Tᴇʀɪ Mᴀ Jᴀɢɢᴜ Kᴀ Lᴜɴᴅ Lᴇᴋᴇ BᴀɴᴅᴀR Kɪ Tᴅᴀ Uᴄʜʟᴛɪ Eʏ 😭💔",
         [4] = "Sᴜɴᴀ Eʏ Tᴇʀɪ Mᴀ Rᴀɪʟ Mᴇ Hɪ Jᴅɪ Bᴀɴᴋᴇ Gʜᴜᴍᴛɪ ʜ 🤍🤎🧡💙",
@@ -70,44 +70,51 @@ FolderFrame.Size = UDim2.new(1, 0, 0, 0); FolderFrame.Position = UDim2.new(0, 0,
 local Scroll = Instance.new("ScrollingFrame", FolderFrame); Scroll.Size = UDim2.new(1, 0, 1, 0); Scroll.BackgroundTransparency = 1; Scroll.CanvasSize = UDim2.new(0, 0, 2.2, 0); Scroll.ScrollBarThickness = 4
 Instance.new("UIListLayout", Scroll)
 
--- // INVISIBLE KEYBOARD EMULATION ENGINE
-local function ClipboardSend(msg)
-    local finalMsg = msg .. string.rep(Settings.InvisibleChar, math.random(2, 5))
+-- // VISUAL CLIPBOARD PASTE ENGINE
+local function ClipboardPasteSend(msg)
+    local finalMsg = msg .. string.rep(Settings.InvisibleChar, math.random(1, 3))
     
-    -- Find the specific Ares Chat Box from your screenshot
-    for _, obj in pairs(game:GetDescendants()) do
+    for _, obj in pairs(LP.PlayerGui:GetDescendants()) do
         if obj:IsA("TextBox") and obj.Visible and obj.Parent.Name ~= "Main" then
             local pText = (obj.PlaceholderText or ""):lower()
-            -- Targeted check for "Type a message..."
+            -- Find the 'Type a message...' box
             if pText:find("type") or pText:find("message") or pText:find("chat") then
                 
-                -- 1. Focus the box (Like tapping it with your finger)
+                -- VISUAL PASTE STEP
                 obj:CaptureFocus()
-                task.wait(0.02)
+                task.wait(0.05)
+                obj.Text = finalMsg -- This makes it show up in the box visually
+                task.wait(0.1) -- Delay so you can actually see it "pasted"
                 
-                -- 2. Inject text (Like pasting from clipboard)
-                obj.Text = finalMsg
-                
-                -- 3. Trigger the internal "Enter/Send" logic
-                -- This mimics the mobile keyboard 'Send' button exactly
+                -- TRIGGER SEND (ENTER KEY EMULATION)
                 obj:ReleaseFocus(true) 
                 
-                -- 4. Fire any hidden script connections attached to that box
+                -- Force Ares Rechat to register the send
                 if getconnections then
                     for _, conn in pairs(getconnections(obj.FocusLost)) do
-                        conn:Fire(true) -- true = Enter was pressed
+                        conn:Fire(true) 
+                    end
+                end
+
+                -- Direct button click if Enter fails
+                for _, btn in pairs(obj.Parent:GetDescendants()) do
+                    if (btn:IsA("TextButton") or btn:IsA("ImageButton")) and (btn.Name:lower():find("send") or btn.Text == ">>") then
+                        btn:Activate()
+                        if getconnections then
+                            for _, v in pairs(getconnections(btn.MouseButton1Click)) do v:Fire() end
+                        end
                     end
                 end
                 
-                -- 5. Force UI Update
-                obj.Text = "" 
+                task.wait(0.05)
+                obj.Text = "" -- Clear for next line
                 break
             end
         end
     end
 end
 
--- // AUTO SPAM LOGIC
+-- // MODES
 local function StartSpam(mode)
     Settings.Active = false; task.wait(0.1); Settings.Active = true
     local target = DynamicInput.Text
@@ -129,13 +136,13 @@ local function StartSpam(mode)
                 msg = target
             end
             
-            if msg ~= "" then ClipboardSend(msg) end
+            if msg ~= "" then ClipboardPasteSend(msg) end
             task.wait(d)
         end
     end)
 end
 
--- // UI BUTTONS
+-- // BUTTONS
 local function CreateBtn(txt, color, callback)
     local b = Instance.new("TextButton", Scroll); b.Size = UDim2.new(1, 0, 0, 38); b.Text = txt; b.BackgroundColor3 = color; b.TextColor3 = Color3.new(1,1,1); b.Font = Enum.Font.GothamBold; b.MouseButton1Click:Connect(callback)
 end
