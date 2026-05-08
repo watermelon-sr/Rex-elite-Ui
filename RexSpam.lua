@@ -18,20 +18,22 @@ local Settings = {
     },
     
     LongRoasts = {
-        [1] = "Tᴇʀɪ Mᴀ Kᴏ BᴜʀɢᴇR Kʜᴀᴋᴇ ᴄᴏᴅᴜɴɢᴀ GʜᴀR GʜᴀR 🍔★",
-        [2] = "SᴘᴀᴍᴍᴇR Bᴀɴᴇɢᴀ Rɴᴅʏᴋᴇ Gᴜʟᴀᴀᴍ Lᴜɴᴅ Cʜᴜs 😄❌",
+        [1] = "Tᴇʀɪ Mᴀ Kᴏ Bᴜʀɢᴇʀ Kʜᴀᴋᴇ ᴄᴏᴅᴜɴɢᴀ Gʜᴀʀ Gʜᴀʀ 🍔★",
+        [2] = "Sᴘᴀᴍᴍᴇʀ Bᴀɴᴇɢᴀ Rɴᴅʏᴋᴇ Gᴜʟᴀᴀᴍ Lᴜɴᴅ Cʜᴜs 😄❌",
         [3] = "Tᴇʀɪ Mᴀ Jᴀɢɢᴜ Kᴀ Lᴜɴᴅ Lᴇᴋᴇ BᴀɴᴅᴀR Kɪ Tᴅᴀ Uᴄʜʟᴛɪ Eʏ 😭💔",
-        [4] = "Sᴜɴᴀ Eʏ Tᴇʀɪ Mᴀ Rᴀɪʟ Mᴇ Hɪ Jᴅɪ Bᴀɴᴋᴇ Gʜᴜᴍᴛɪ ʜ 🤍🤎🧡💙",
+        [4] = "Sᴜɴᴀ Eʏ Tᴇʀɪ Mᴀ Rᴀɪʟ Mᴇ Hɪᴊᴅɪ Bᴀɴᴋᴇ Gʜᴜᴍᴛɪ ʜ 🤍🤎🧡💙",
         [5] = "ᴡᴇᴀᴋ ᴋᴇᴇᴅᴇ ᴄʜᴜᴅᴀɪ ᴋʜᴀ 🧸"
     }
 }
 
 local LP = game:GetService("Players").LocalPlayer
+local TS = game:GetService("TweenService")
 local CoreGui = game:GetService("CoreGui")
 local ScreenGui = Instance.new("ScreenGui", CoreGui)
 ScreenGui.Name = "RexFinalUI"
+ScreenGui.DisplayOrder = 999
 
--- // INTRO HUB BOX (NO CHANGES)
+-- // INTRO HUB BOX
 local HubBox = Instance.new("Frame", ScreenGui)
 HubBox.Size = UDim2.new(0, 350, 0, 200); HubBox.Position = UDim2.new(0.5, -175, 0.5, -100)
 HubBox.BackgroundColor3 = Color3.fromRGB(12, 12, 12); HubBox.BorderSizePixel = 0; HubBox.Active = true; HubBox.Draggable = true
@@ -59,62 +61,59 @@ Main.Size = UDim2.new(0, 260, 0, 220); Main.Position = UDim2.new(0.5, -130, 0.5,
 Instance.new("UICorner", Main)
 local MainStroke = Instance.new("UIStroke", Main); MainStroke.Thickness = 3
 
+local Title = Instance.new("TextLabel", Main)
+Title.Size = UDim2.new(1, 0, 0, 40); Title.Text = "REX UI-CHAT SPAM"; Title.TextColor3 = Color3.new(1,1,1); Title.Font = Enum.Font.GothamBold; Title.BackgroundTransparency = 1
+
 local DynamicInput = Instance.new("TextBox", Main)
-DynamicInput.Size = UDim2.new(0.9, 0, 0, 40); DynamicInput.Position = UDim2.new(0.05, 0, 0.2, 0); DynamicInput.PlaceholderText = "TARGET NAME"; DynamicInput.BackgroundColor3 = Color3.fromRGB(25, 25, 25); DynamicInput.TextColor3 = Color3.new(1, 1, 1); Instance.new("UICorner", DynamicInput)
+DynamicInput.Size = UDim2.new(0.9, 0, 0, 40); DynamicInput.Position = UDim2.new(0.05, 0, 0.2, 0); DynamicInput.PlaceholderText = "TARGET NAME"; DynamicInput.BackgroundColor3 = Color3.fromRGB(25, 25, 25); DynamicInput.TextColor3 = Color3.new(1, 1, 1)
+Instance.new("UICorner", DynamicInput)
 
 local DelayInput = Instance.new("TextBox", Main)
-DelayInput.Size = UDim2.new(0.9, 0, 0, 30); DelayInput.Position = UDim2.new(0.05, 0, 0.42, 0); DelayInput.PlaceholderText = "DELAY (SEC)"; DelayInput.Text = "1.8"; DelayInput.BackgroundColor3 = Color3.fromRGB(25, 25, 25); DelayInput.TextColor3 = Color3.new(1, 1, 0); Instance.new("UICorner", DelayInput)
+DelayInput.Size = UDim2.new(0.9, 0, 0, 30); DelayInput.Position = UDim2.new(0.05, 0, 0.42, 0); DelayInput.PlaceholderText = "DELAY (SEC)"; DelayInput.Text = "1.8"; DelayInput.BackgroundColor3 = Color3.fromRGB(25, 25, 25); DelayInput.TextColor3 = Color3.new(1, 1, 0)
+Instance.new("UICorner", DelayInput)
 
 local FolderFrame = Instance.new("Frame", Main)
 FolderFrame.Size = UDim2.new(1, 0, 0, 0); FolderFrame.Position = UDim2.new(0, 0, 1, 0); FolderFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15); FolderFrame.ClipsDescendants = true
 local Scroll = Instance.new("ScrollingFrame", FolderFrame); Scroll.Size = UDim2.new(1, 0, 1, 0); Scroll.BackgroundTransparency = 1; Scroll.CanvasSize = UDim2.new(0, 0, 2.2, 0); Scroll.ScrollBarThickness = 4
 Instance.new("UIListLayout", Scroll)
 
--- // VISUAL CLIPBOARD PASTE ENGINE
-local function ClipboardPasteSend(msg)
-    local finalMsg = msg .. string.rep(Settings.InvisibleChar, math.random(1, 3))
-    
+-- // ELITE SMART SEND ENGINE
+local function UniversalSend(msg)
+    local finalMsg = msg .. " " .. string.rep(Settings.InvisibleChar, math.random(1, 3))
     for _, obj in pairs(LP.PlayerGui:GetDescendants()) do
         if obj:IsA("TextBox") and obj.Visible and obj.Parent.Name ~= "Main" then
-            local pText = (obj.PlaceholderText or ""):lower()
-            -- Find the 'Type a message...' box
-            if pText:find("type") or pText:find("message") or pText:find("chat") then
+            if (obj.PlaceholderText or ""):lower():find("click here to chat") or (obj.Text:lower():find("click here")) then
+                obj.Text = finalMsg
+                task.wait(0.08) -- Guaranteed registration
                 
-                -- VISUAL PASTE STEP
-                obj:CaptureFocus()
-                task.wait(0.05)
-                obj.Text = finalMsg -- This makes it show up in the box visually
-                task.wait(0.1) -- Delay so you can actually see it "pasted"
-                
-                -- TRIGGER SEND (ENTER KEY EMULATION)
-                obj:ReleaseFocus(true) 
-                
-                -- Force Ares Rechat to register the send
-                if getconnections then
-                    for _, conn in pairs(getconnections(obj.FocusLost)) do
-                        conn:Fire(true) 
-                    end
-                end
-
-                -- Direct button click if Enter fails
+                -- Check for Send Buttons (arrows, "Send", icon buttons)
+                local sentViaBtn = false
                 for _, btn in pairs(obj.Parent:GetDescendants()) do
-                    if (btn:IsA("TextButton") or btn:IsA("ImageButton")) and (btn.Name:lower():find("send") or btn.Text == ">>") then
-                        btn:Activate()
-                        if getconnections then
-                            for _, v in pairs(getconnections(btn.MouseButton1Click)) do v:Fire() end
+                    if (btn:IsA("ImageButton") or btn:IsA("TextButton")) and btn.Visible then
+                        if btn.Name:lower():find("send") or (btn:IsA("TextLabel") and btn.Text:find(">>")) or btn.Name:lower():find("submit") then
+                            if getconnections then
+                                for _, conn in pairs(getconnections(btn.MouseButton1Click)) do conn:Fire() end
+                            end
+                            sentViaBtn = true
+                            break
                         end
                     end
                 end
                 
-                task.wait(0.05)
-                obj.Text = "" -- Clear for next line
+                -- Default Method if no button found
+                if not sentViaBtn and getconnections then
+                    local conns = getconnections(obj.FocusLost)
+                    if conns[1] then conns[1]:Fire(true) end
+                end
+                
+                obj.Text = ""
                 break
             end
         end
     end
 end
 
--- // MODES
+-- // AUTO-ADJUSTING MODES
 local function StartSpam(mode)
     Settings.Active = false; task.wait(0.1); Settings.Active = true
     local target = DynamicInput.Text
@@ -130,19 +129,28 @@ local function StartSpam(mode)
             elseif mode == "Long" then
                 local roast = Settings.LongRoasts[l]
                 l = (l >= #Settings.LongRoasts) and 1 or l + 1
-                msg = Settings.Symbols[sIndex] .. " " .. roast .. " " .. target
+                local curSym = Settings.Symbols[sIndex]
                 sIndex = (sIndex >= #Settings.Symbols) and 1 or sIndex + 1
+                
+                -- AUTO-CALCULATE MAX SYMBOLS
+                local base = (target ~= "" and target .. " " or "") .. roast
+                local maxAllowed = 195 -- Safest limit for Roblox
+                local spaceNeeded = maxAllowed - #base
+                local repeatTimes = math.floor(spaceNeeded / #curSym)
+                
+                msg = (repeatTimes > 0 and string.rep(curSym, repeatTimes) or "") .. " " .. base
             elseif mode == "Custom" then
-                msg = target
+                msg = target ~= "" and target or ""
+                if msg == "" then Settings.Active = false end
             end
             
-            if msg ~= "" then ClipboardPasteSend(msg) end
+            if msg ~= "" then UniversalSend(msg) end
             task.wait(d)
         end
     end)
 end
 
--- // BUTTONS
+-- // UI BUTTONS
 local function CreateBtn(txt, color, callback)
     local b = Instance.new("TextButton", Scroll); b.Size = UDim2.new(1, 0, 0, 38); b.Text = txt; b.BackgroundColor3 = color; b.TextColor3 = Color3.new(1,1,1); b.Font = Enum.Font.GothamBold; b.MouseButton1Click:Connect(callback)
 end
