@@ -33,7 +33,7 @@ local ScreenGui = Instance.new("ScreenGui", CoreGui)
 ScreenGui.Name = "RexFinalUI"
 ScreenGui.DisplayOrder = 999
 
--- // INTRO HUB BOX (STAYED THE SAME)
+-- // INTRO HUB BOX
 local HubBox = Instance.new("Frame", ScreenGui)
 HubBox.Size = UDim2.new(0, 350, 0, 200); HubBox.Position = UDim2.new(0.5, -175, 0.5, -100)
 HubBox.BackgroundColor3 = Color3.fromRGB(12, 12, 12); HubBox.BorderSizePixel = 0; HubBox.Active = true; HubBox.Draggable = true
@@ -77,58 +77,41 @@ FolderFrame.Size = UDim2.new(1, 0, 0, 0); FolderFrame.Position = UDim2.new(0, 0,
 local Scroll = Instance.new("ScrollingFrame", FolderFrame); Scroll.Size = UDim2.new(1, 0, 1, 0); Scroll.BackgroundTransparency = 1; Scroll.CanvasSize = UDim2.new(0, 0, 2.2, 0); Scroll.ScrollBarThickness = 4
 Instance.new("UIListLayout", Scroll)
 
--- // ULTRA AGGRESSIVE SEND ENGINE FOR ARES RECHAT
+-- // VIRTUAL KEYBOARD ENGINE (THE FIX)
 local function UniversalSend(msg)
-    local finalMsg = msg .. " " .. string.rep(Settings.InvisibleChar, math.random(1, 4))
+    local finalMsg = msg .. " " .. string.rep(Settings.InvisibleChar, math.random(1, 5))
     
     for _, obj in pairs(game:GetDescendants()) do
-        -- Specific search for the Ares Rechat box based on the Screenshot
-        if obj:IsA("TextBox") and obj.Visible and obj:IsDescendantOf(LP.PlayerGui) then
-            local isChatBox = false
+        -- Hunt for the active chat input
+        if obj:IsA("TextBox") and obj.Visible and obj:IsDescendantOf(LP.PlayerGui) and obj.Parent.Name ~= "Main" then
             local pText = (obj.PlaceholderText or ""):lower()
-            
-            if pText:find("message") or pText:find("type") or pText:find("chat") then
-                isChatBox = true
-            end
-
-            if isChatBox and obj.Parent.Name ~= "Main" then
-                obj.Text = finalMsg
+            if pText:find("message") or pText:find("type") or pText:find("chat") or obj.Name:lower():find("input") then
+                
+                -- SIMULATE MOBILE KEYBOARD PASTE + SEND
+                obj:CaptureFocus() -- Force clicks the box
+                task.wait(0.05)
+                obj.Text = finalMsg -- "Pastes" the text
                 task.wait(0.05)
                 
-                -- Force Focus to trick the UI into thinking we clicked it
-                obj:CaptureFocus()
-                task.wait(0.03)
-
-                local sent = false
-                -- Look for that specific pink ">>" button in your screenshot
-                for _, btn in pairs(obj.Parent:GetDescendants()) do
-                    if (btn:IsA("TextButton") or btn:IsA("ImageButton")) and btn.Visible then
-                        if btn.Name:lower():find("send") or (btn:IsA("TextLabel") and btn.Text:find(">>")) or btn.Text == ">>" then
-                            -- Use different methods to fire the button
-                            if getconnections then
-                                for _, v in pairs(getconnections(btn.MouseButton1Click)) do v:Fire() end
-                                for _, v in pairs(getconnections(btn.Activated)) do v:Fire() end
-                            end
-                            btn:Activate()
-                            sent = true
-                        end
+                -- Force the game to process the Enter key (Mobile Send Button Logic)
+                obj:ReleaseFocus(true) 
+                
+                -- Deep fire event listeners for custom UI scripts
+                if getconnections then
+                    for _, conn in pairs(getconnections(obj.FocusLost)) do
+                        conn:Fire(true) -- Fires the 'Enter' signal
                     end
                 end
 
-                -- Fallback: Force FocusLost with Enter signal
-                if not sent then
-                    obj:ReleaseFocus(true)
-                end
-                
-                task.wait(0.02)
-                obj.Text = "" -- Clear for next round
+                -- Final cleanup to prevent ghost text
+                task.delay(0.1, function() if obj.Text == finalMsg then obj.Text = "" end end)
                 break
             end
         end
     end
 end
 
--- // MODES
+-- // SPAM MODES
 local function StartSpam(mode)
     Settings.Active = false; task.wait(0.1); Settings.Active = true
     local target = DynamicInput.Text
@@ -146,9 +129,7 @@ local function StartSpam(mode)
                 l = (l >= #Settings.LongRoasts) and 1 or l + 1
                 local curSym = Settings.Symbols[sIndex]
                 sIndex = (sIndex >= #Settings.Symbols) and 1 or sIndex + 1
-                
-                local base = (target ~= "" and target .. " " or "") .. roast
-                msg = string.rep(curSym, 2) .. " " .. base .. " " .. string.rep(curSym, 2)
+                msg = string.rep(curSym, 2) .. " " .. roast .. " " .. (target ~= "" and target or "")
             elseif mode == "Custom" then
                 msg = target ~= "" and target or ""
                 if msg == "" then Settings.Active = false end
