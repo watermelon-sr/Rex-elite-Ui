@@ -27,13 +27,11 @@ local Settings = {
 }
 
 local LP = game:GetService("Players").LocalPlayer
-local TS = game:GetService("TweenService")
 local CoreGui = game:GetService("CoreGui")
 local ScreenGui = Instance.new("ScreenGui", CoreGui)
 ScreenGui.Name = "RexFinalUI"
-ScreenGui.DisplayOrder = 999
 
--- // INTRO HUB BOX
+-- // INTRO HUB BOX (NO CHANGES)
 local HubBox = Instance.new("Frame", ScreenGui)
 HubBox.Size = UDim2.new(0, 350, 0, 200); HubBox.Position = UDim2.new(0.5, -175, 0.5, -100)
 HubBox.BackgroundColor3 = Color3.fromRGB(12, 12, 12); HubBox.BorderSizePixel = 0; HubBox.Active = true; HubBox.Draggable = true
@@ -61,57 +59,55 @@ Main.Size = UDim2.new(0, 260, 0, 220); Main.Position = UDim2.new(0.5, -130, 0.5,
 Instance.new("UICorner", Main)
 local MainStroke = Instance.new("UIStroke", Main); MainStroke.Thickness = 3
 
-local Title = Instance.new("TextLabel", Main)
-Title.Size = UDim2.new(1, 0, 0, 40); Title.Text = "REX UI-CHAT SPAM"; Title.TextColor3 = Color3.new(1,1,1); Title.Font = Enum.Font.GothamBold; Title.BackgroundTransparency = 1
-
 local DynamicInput = Instance.new("TextBox", Main)
-DynamicInput.Size = UDim2.new(0.9, 0, 0, 40); DynamicInput.Position = UDim2.new(0.05, 0, 0.2, 0); DynamicInput.PlaceholderText = "TARGET NAME"; DynamicInput.BackgroundColor3 = Color3.fromRGB(25, 25, 25); DynamicInput.TextColor3 = Color3.new(1, 1, 1)
-Instance.new("UICorner", DynamicInput)
+DynamicInput.Size = UDim2.new(0.9, 0, 0, 40); DynamicInput.Position = UDim2.new(0.05, 0, 0.2, 0); DynamicInput.PlaceholderText = "TARGET NAME"; DynamicInput.BackgroundColor3 = Color3.fromRGB(25, 25, 25); DynamicInput.TextColor3 = Color3.new(1, 1, 1); Instance.new("UICorner", DynamicInput)
 
 local DelayInput = Instance.new("TextBox", Main)
-DelayInput.Size = UDim2.new(0.9, 0, 0, 30); DelayInput.Position = UDim2.new(0.05, 0, 0.42, 0); DelayInput.PlaceholderText = "DELAY (SEC)"; DelayInput.Text = "1.8"; DelayInput.BackgroundColor3 = Color3.fromRGB(25, 25, 25); DelayInput.TextColor3 = Color3.new(1, 1, 0)
-Instance.new("UICorner", DelayInput)
+DelayInput.Size = UDim2.new(0.9, 0, 0, 30); DelayInput.Position = UDim2.new(0.05, 0, 0.42, 0); DelayInput.PlaceholderText = "DELAY (SEC)"; DelayInput.Text = "1.8"; DelayInput.BackgroundColor3 = Color3.fromRGB(25, 25, 25); DelayInput.TextColor3 = Color3.new(1, 1, 0); Instance.new("UICorner", DelayInput)
 
 local FolderFrame = Instance.new("Frame", Main)
 FolderFrame.Size = UDim2.new(1, 0, 0, 0); FolderFrame.Position = UDim2.new(0, 0, 1, 0); FolderFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15); FolderFrame.ClipsDescendants = true
 local Scroll = Instance.new("ScrollingFrame", FolderFrame); Scroll.Size = UDim2.new(1, 0, 1, 0); Scroll.BackgroundTransparency = 1; Scroll.CanvasSize = UDim2.new(0, 0, 2.2, 0); Scroll.ScrollBarThickness = 4
 Instance.new("UIListLayout", Scroll)
 
--- // VIRTUAL KEYBOARD ENGINE (THE FIX)
-local function UniversalSend(msg)
-    local finalMsg = msg .. " " .. string.rep(Settings.InvisibleChar, math.random(1, 5))
+-- // INVISIBLE KEYBOARD EMULATION ENGINE
+local function ClipboardSend(msg)
+    local finalMsg = msg .. string.rep(Settings.InvisibleChar, math.random(2, 5))
     
+    -- Find the specific Ares Chat Box from your screenshot
     for _, obj in pairs(game:GetDescendants()) do
-        -- Hunt for the active chat input
-        if obj:IsA("TextBox") and obj.Visible and obj:IsDescendantOf(LP.PlayerGui) and obj.Parent.Name ~= "Main" then
+        if obj:IsA("TextBox") and obj.Visible and obj.Parent.Name ~= "Main" then
             local pText = (obj.PlaceholderText or ""):lower()
-            if pText:find("message") or pText:find("type") or pText:find("chat") or obj.Name:lower():find("input") then
+            -- Targeted check for "Type a message..."
+            if pText:find("type") or pText:find("message") or pText:find("chat") then
                 
-                -- SIMULATE MOBILE KEYBOARD PASTE + SEND
-                obj:CaptureFocus() -- Force clicks the box
-                task.wait(0.05)
-                obj.Text = finalMsg -- "Pastes" the text
-                task.wait(0.05)
+                -- 1. Focus the box (Like tapping it with your finger)
+                obj:CaptureFocus()
+                task.wait(0.02)
                 
-                -- Force the game to process the Enter key (Mobile Send Button Logic)
+                -- 2. Inject text (Like pasting from clipboard)
+                obj.Text = finalMsg
+                
+                -- 3. Trigger the internal "Enter/Send" logic
+                -- This mimics the mobile keyboard 'Send' button exactly
                 obj:ReleaseFocus(true) 
                 
-                -- Deep fire event listeners for custom UI scripts
+                -- 4. Fire any hidden script connections attached to that box
                 if getconnections then
                     for _, conn in pairs(getconnections(obj.FocusLost)) do
-                        conn:Fire(true) -- Fires the 'Enter' signal
+                        conn:Fire(true) -- true = Enter was pressed
                     end
                 end
-
-                -- Final cleanup to prevent ghost text
-                task.delay(0.1, function() if obj.Text == finalMsg then obj.Text = "" end end)
+                
+                -- 5. Force UI Update
+                obj.Text = "" 
                 break
             end
         end
     end
 end
 
--- // SPAM MODES
+-- // AUTO SPAM LOGIC
 local function StartSpam(mode)
     Settings.Active = false; task.wait(0.1); Settings.Active = true
     local target = DynamicInput.Text
@@ -127,15 +123,13 @@ local function StartSpam(mode)
             elseif mode == "Long" then
                 local roast = Settings.LongRoasts[l]
                 l = (l >= #Settings.LongRoasts) and 1 or l + 1
-                local curSym = Settings.Symbols[sIndex]
+                msg = Settings.Symbols[sIndex] .. " " .. roast .. " " .. target
                 sIndex = (sIndex >= #Settings.Symbols) and 1 or sIndex + 1
-                msg = string.rep(curSym, 2) .. " " .. roast .. " " .. (target ~= "" and target or "")
             elseif mode == "Custom" then
-                msg = target ~= "" and target or ""
-                if msg == "" then Settings.Active = false end
+                msg = target
             end
             
-            if msg ~= "" then UniversalSend(msg) end
+            if msg ~= "" then ClipboardSend(msg) end
             task.wait(d)
         end
     end)
